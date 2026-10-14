@@ -1,0 +1,47 @@
+# =========================
+# Environment files / secrets
+# =========================
+.env
+.env.*
+!.env.example
+**/application-local.yml
+**/application-local.yaml
+
+# =========================
+# React / Node.js
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/.vite/
+
+# =========================
+# Java / Maven / Spring Boot
+# =========================
+**/target/
+*.class
+*.jar
+*.war
+hs_err_pid*
+
+# =========================
+# IDEs
+# =========================
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Operating system
+# =========================
+.DS_Store
+Thumbs.db
