@@ -158,7 +158,7 @@ export default function AppointmentsPage() {
   };
 
   return (
-    <div className="mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       {/* Header */}
       <section className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>

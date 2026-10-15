@@ -12,7 +12,6 @@ import {
   MapPin,
   Mail,
   UserRound,
-  LogIn,
   LogOut,
 } from "lucide-react";
 import { useHospital } from "../context/HospitalContext";
@@ -127,30 +126,33 @@ export default function PublicLayout() {
             {!isLoggedIn ? (
               <Link
                 to="/login"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#1265b5] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-blue-900/15 transition hover:bg-[#0e559b]"
               >
-                <LogIn size={14} />
-                <span>Sign In</span>
+                <UserRound size={14} />
+                <span>Patient Portal</span>
+                <ArrowRight size={13} />
               </Link>
             ) : (
-              <button
-                type="button"
-                onClick={logout}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition"
-              >
-                <LogOut size={14} />
-                <span>Sign Out</span>
-              </button>
+              <>
+                <Link
+                  to="/patient/dashboard"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#1265b5] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-blue-900/15 transition hover:bg-[#0e559b]"
+                >
+                  <UserRound size={14} />
+                  <span>Patient Portal</span>
+                  <ArrowRight size={13} />
+                </Link>
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition"
+                  title="Sign Out"
+                >
+                  <LogOut size={14} />
+                  <span>Sign Out</span>
+                </button>
+              </>
             )}
-
-            <Link
-              to="/patient/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#1265b5] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-blue-900/15 transition hover:bg-[#0e559b]"
-            >
-              <UserRound size={14} />
-              <span>Patient Portal</span>
-              <ArrowRight size={13} />
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -184,33 +186,34 @@ export default function PublicLayout() {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 py-2.5 text-xs font-semibold text-slate-700"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-[#1265b5] py-2.5 text-xs font-semibold text-white shadow-xs"
                   >
-                    <LogIn size={15} />
-                    Sign In
+                    <UserRound size={15} />
+                    <span>Patient Portal Login</span>
                   </Link>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      logout();
-                    }}
-                    className="flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 py-2.5 text-xs font-semibold text-rose-700"
-                  >
-                    <LogOut size={15} />
-                    Sign Out
-                  </button>
+                  <>
+                    <Link
+                      to="/patient/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-[#1265b5] py-2.5 text-xs font-semibold text-white"
+                    >
+                      <UserRound size={15} />
+                      <span>Open Patient Portal</span>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        logout();
+                      }}
+                      className="flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 py-2.5 text-xs font-semibold text-rose-700"
+                    >
+                      <LogOut size={15} />
+                      <span>Sign Out</span>
+                    </button>
+                  </>
                 )}
-
-                <Link
-                  to="/patient/dashboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-xs font-semibold text-white"
-                >
-                  <UserRound size={15} />
-                  Open Patient Portal
-                </Link>
                 <a
                   href="tel:108"
                   className="flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 py-2.5 text-xs font-semibold text-rose-700"

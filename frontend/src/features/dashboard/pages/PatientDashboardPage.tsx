@@ -150,7 +150,7 @@ export default function PatientDashboardPage() {
   const firstName = currentPatient.fullName.split(" ")[0];
 
   return (
-    <div className="mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       {/* Page Heading & Quick Action */}
       <section className="mb-7 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
@@ -475,7 +475,7 @@ export default function PatientDashboardPage() {
                 </p>
                 <Link
                   to="/patient/book"
-                  className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#1265b5] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-[#0e559b]"
                 >
                   <CalendarPlus size={14} />
                   Book Now
@@ -575,7 +575,7 @@ export default function PatientDashboardPage() {
                   </div>
                   <Link
                     to={`/patient/book/${primaryDoctor.id}`}
-                    className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-xs font-semibold text-white shadow-xs transition hover:bg-blue-700"
+                    className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[#1265b5] text-xs font-semibold text-white shadow-xs transition hover:bg-[#0e559b]"
                   >
                     Book Consultation
                     <ArrowRight size={14} />
