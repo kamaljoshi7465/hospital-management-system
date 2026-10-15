@@ -1,0 +1,164 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Amit Sharma",
+    "email": "amit.sharma@example.com",
+    "phone": "9000000001",
+    "specialization": "General Physician",
+    "qualification": "MBBS, MD (Internal Medicine)",
+    "experienceYears": 10,
+    "consultationFee": 600,
+    "rating": 4.8,
+    "totalReviews": 128,
+    "bio": "Experienced general physician specializing in preventive healthcare, lifestyle diseases, diabetes management, and chronic illness care.",
+    "image": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400",
+    "available": true,
+    "workingDays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "workingHours": {
+      "start": "09:00",
+      "end": "17:00"
+    },
+    "slotDurationMinutes": 30
+  },
+  {
+    "id": 2,
+    "name": "Dr. Sneha Kulkarni",
+    "email": "sneha.kulkarni@example.com",
+    "phone": "9000000004",
+    "specialization": "Cardiologist",
+    "qualification": "MBBS, MD, DM (Cardiology)",
+    "experienceYears": 12,
+    "consultationFee": 900,
+    "rating": 4.9,
+    "totalReviews": 194,
+    "bio": "Senior interventional cardiologist with extensive experience in coronary interventions, hypertension management, and heart failure rehabilitation.",
+    "image": "https://images.unsplash.com/photo-1594824813682-127dbca03780?auto=format&fit=crop&q=80&w=400",
+    "available": true,
+    "workingDays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "workingHours": {
+      "start": "10:00",
+      "end": "18:00"
+    },
+    "slotDurationMinutes": 30
+  },
+  {
+    "id": 3,
+    "name": "Dr. Rajesh Mehta",
+    "email": "rajesh.mehta@example.com",
+    "phone": "9000000005",
+    "specialization": "Neurologist",
+    "qualification": "MBBS, MD, DM (Neurology)",
+    "experienceYears": 15,
+    "consultationFee": 1200,
+    "rating": 4.9,
+    "totalReviews": 210,
+    "bio": "Distinguished neurologist specializing in migraine therapies, stroke prevention, neurodegenerative conditions, and epilepsy management.",
+    "image": "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400",
+    "available": true,
+    "workingDays": [
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Saturday"
+    ],
+    "workingHours": {
+      "start": "09:30",
+      "end": "16:30"
+    },
+    "slotDurationMinutes": 30
+  },
+  {
+    "id": 4,
+    "name": "Dr. Ananya Iyer",
+    "email": "ananya.iyer@example.com",
+    "phone": "9000000006",
+    "specialization": "Pediatrician",
+    "qualification": "MBBS, DCH, MD (Pediatrics)",
+    "experienceYears": 8,
+    "consultationFee": 700,
+    "rating": 4.7,
+    "totalReviews": 142,
+    "bio": "Compassionate pediatrician committed to newborn care, child immunization, developmental milestones, and pediatric nutrition.",
+    "image": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400",
+    "available": true,
+    "workingDays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "workingHours": {
+      "start": "10:00",
+      "end": "17:00"
+    },
+    "slotDurationMinutes": 30
+  },
+  {
+    "id": 5,
+    "name": "Dr. Vikram Rathore",
+    "email": "vikram.rathore@example.com",
+    "phone": "9000000007",
+    "specialization": "Orthopedic Surgeon",
+    "qualification": "MBBS, MS (Orthopedics), MCh",
+    "experienceYears": 14,
+    "consultationFee": 850,
+    "rating": 4.8,
+    "totalReviews": 165,
+    "bio": "Specialist in joint replacements, sports injuries, arthroscopic surgeries, and spine disorders with minimally invasive approaches.",
+    "image": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=400",
+    "available": true,
+    "workingDays": [
+      "Monday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "workingHours": {
+      "start": "11:00",
+      "end": "19:00"
+    },
+    "slotDurationMinutes": 30
+  },
+  {
+    "id": 6,
+    "name": "Dr. Meera Nambiar",
+    "email": "meera.nambiar@example.com",
+    "phone": "9000000008",
+    "specialization": "Dermatologist",
+    "qualification": "MBBS, MD (Dermatology & Venereology)",
+    "experienceYears": 9,
+    "consultationFee": 750,
+    "rating": 4.9,
+    "totalReviews": 180,
+    "bio": "Expert in clinical and aesthetic dermatology, acne scar therapies, laser treatments, eczema, and skin allergy management.",
+    "image": "https://images.unsplash.com/photo-1594824813715-92750e6332bf?auto=format&fit=crop&q=80&w=400",
+    "available": true,
+    "workingDays": [
+      "Monday",
+      "Tuesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "workingHours": {
+      "start": "10:00",
+      "end": "16:00"
+    },
+    "slotDurationMinutes": 30
+  }
+]
