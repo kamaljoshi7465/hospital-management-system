@@ -12,6 +12,7 @@ import {
   MapPin,
   Mail,
   UserRound,
+  UserCheck,
   LogOut,
 } from "lucide-react";
 import { useHospital } from "../context/HospitalContext";
@@ -123,6 +124,14 @@ export default function PublicLayout() {
               <span>108 Emergency</span>
             </a>
 
+            <Link
+              to="/doctor-login"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition"
+            >
+              <UserCheck size={14} className="text-teal-600" />
+              <span>Doctor Portal</span>
+            </Link>
+
             {!isLoggedIn ? (
               <Link
                 to="/login"
@@ -182,6 +191,15 @@ export default function PublicLayout() {
               ))}
 
               <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+                <Link
+                  to="/doctor-login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-semibold text-slate-700 shadow-xs"
+                >
+                  <UserCheck size={15} className="text-teal-600" />
+                  <span>Doctor Portal Login</span>
+                </Link>
+
                 {!isLoggedIn ? (
                   <Link
                     to="/login"
@@ -312,6 +330,11 @@ export default function PublicLayout() {
                 <li>
                   <Link to="/patient/profile" className="hover:text-white transition">
                     Health Vitals & Medical History
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/doctor-login" className="hover:text-teal-300 text-teal-400 font-semibold transition">
+                    Doctor Clinical Portal →
                   </Link>
                 </li>
               </ul>

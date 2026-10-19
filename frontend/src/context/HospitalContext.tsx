@@ -42,7 +42,11 @@ interface HospitalContextType {
   appointments: Appointment[];
   patients: Patient[];
   currentPatient: Patient;
-  setCurrentPatientId: (id: number) => void;
+  setCurrentPatientId: (id: number, silent?: boolean) => void;
+  currentDoctor: Doctor;
+  setCurrentDoctorId: (id: number, silent?: boolean) => void;
+  updateDoctor: (id: number, updated: Partial<Doctor>) => void;
+  updateAppointmentStatus: (id: number, status: AppointmentStatus) => void;
   bookAppointment: (input: BookAppointmentInput) => Appointment;
   cancelAppointment: (id: number) => void;
   rescheduleAppointment: (
@@ -70,12 +74,21 @@ const STORAGE_KEYS = {
   APPOINTMENTS: "medicare_appointments_v1",
   PATIENTS: "medicare_patients_v1",
   CURRENT_PATIENT_ID: "medicare_patient_id_v1",
+  DOCTORS: "medicare_doctors_v1",
+  CURRENT_DOCTOR_ID: "medicare_doctor_id_v1",
 };
 
 const HospitalContext = createContext<HospitalContextType | undefined>(undefined);
 
 export function HospitalProvider({ children }: { children: ReactNode }) {
-  const [doctors] = useState<Doctor[]>(doctorsJson as Doctor[]);
+  const [doctors, setDoctors] = useState<Doctor[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.DOCTORS);
+      return stored ? JSON.parse(stored) : (doctorsJson as Doctor[]);
+    } catch {
+      return doctorsJson as Doctor[];
+    }
+  });
 
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     try {
@@ -108,10 +121,43 @@ export function HospitalProvider({ children }: { children: ReactNode }) {
 
   const currentPatientId = switchedPatientId ?? auth?.currentUser?.patientId ?? 1;
 
+  const [switchedDoctorId, setSwitchedDoctorId] = useState<number | null>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.CURRENT_DOCTOR_ID);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const currentDoctorId = switchedDoctorId ?? auth?.currentUser?.doctorId ?? 1;
+
+  const currentDoctor =
+    doctors.find((d) => d.id === currentDoctorId) || doctors[0];
+
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [activeVideoCall, setActiveVideoCall] = useState<Appointment | null>(null);
 
   // Sync to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.DOCTORS, JSON.stringify(doctors));
+    } catch {
+      // ignore
+    }
+  }, [doctors]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEYS.CURRENT_DOCTOR_ID,
+        JSON.stringify(currentDoctorId),
+      );
+    } catch {
+      // ignore
+    }
+  }, [currentDoctorId]);
+
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(appointments));
@@ -160,16 +206,60 @@ export function HospitalProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  const setCurrentPatientId = (id: number) => {
-    setSwitchedPatientId(id);
-    const pat = patients.find((p) => p.id === id);
-    if (pat) {
-      addToast(
-        "Account Switched",
-        `Viewing profile as ${pat.fullName}`,
-        "info",
-      );
+  const setCurrentPatientId = (id: number, silent = false) => {
+    setSwitchedPatientId((prev) => {
+      if (prev === id) return prev;
+      return id;
+    });
+    if (!silent && currentPatientId !== id) {
+      const pat = patients.find((p) => p.id === id);
+      if (pat) {
+        addToast(
+          "Account Switched",
+          `Viewing profile as ${pat.fullName}`,
+          "info",
+        );
+      }
     }
+  };
+
+  const setCurrentDoctorId = (id: number, silent = false) => {
+    setSwitchedDoctorId((prev) => {
+      if (prev === id) return prev;
+      return id;
+    });
+    if (!silent && currentDoctorId !== id) {
+      const doc = doctors.find((d) => d.id === id);
+      if (doc) {
+        addToast(
+          "Doctor Workspace Switched",
+          `Viewing workspace for ${doc.name}`,
+          "info",
+        );
+      }
+    }
+  };
+
+  const updateDoctor = (id: number, updated: Partial<Doctor>) => {
+    setDoctors((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, ...updated } : d)),
+    );
+    addToast(
+      "Profile Updated",
+      "Doctor profile and schedule settings have been saved.",
+      "success",
+    );
+  };
+
+  const updateAppointmentStatus = (id: number, status: AppointmentStatus) => {
+    setAppointments((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, status } : a)),
+    );
+    addToast(
+      "Status Updated",
+      `Appointment marked as ${status.charAt(0) + status.slice(1).toLowerCase()}.`,
+      "info",
+    );
   };
 
   const bookAppointment = (input: BookAppointmentInput): Appointment => {
@@ -288,11 +378,15 @@ export function HospitalProvider({ children }: { children: ReactNode }) {
   const resetDemoData = () => {
     setAppointments(appointmentsJson as Appointment[]);
     setPatients(patientsJson as Patient[]);
+    setDoctors(doctorsJson as Doctor[]);
     setSwitchedPatientId(null);
+    setSwitchedDoctorId(null);
     try {
       localStorage.removeItem(STORAGE_KEYS.APPOINTMENTS);
       localStorage.removeItem(STORAGE_KEYS.PATIENTS);
       localStorage.removeItem(STORAGE_KEYS.CURRENT_PATIENT_ID);
+      localStorage.removeItem(STORAGE_KEYS.DOCTORS);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_DOCTOR_ID);
     } catch {
       // ignore
     }
@@ -319,6 +413,10 @@ export function HospitalProvider({ children }: { children: ReactNode }) {
         patients,
         currentPatient,
         setCurrentPatientId,
+        currentDoctor,
+        setCurrentDoctorId,
+        updateDoctor,
+        updateAppointmentStatus,
         bookAppointment,
         cancelAppointment,
         rescheduleAppointment,

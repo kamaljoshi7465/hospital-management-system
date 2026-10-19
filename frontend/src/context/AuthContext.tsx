@@ -9,15 +9,18 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import patientsData from "../data/patients.json";
+import doctorsData from "../data/doctors.json";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                               */
 /* ------------------------------------------------------------------ */
 
-interface AuthUser {
-  patientId: number;
+export interface AuthUser {
+  patientId?: number;
+  doctorId?: number;
   email: string;
   fullName: string;
+  role: "patient" | "doctor";
 }
 
 interface AuthContextValue {
@@ -26,6 +29,7 @@ interface AuthContextValue {
   login: (
     email: string,
     password: string,
+    role?: "patient" | "doctor",
   ) => { success: boolean; error?: string };
   logout: () => void;
 }
@@ -65,10 +69,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /**
    * Attempt to log in with email + password.
-   * Validates against patients.json — any patient email + DEMO_PASSWORD succeeds.
+   * Validates against patients.json or doctors.json depending on role.
    */
   const login = useCallback(
-    (email: string, password: string): { success: boolean; error?: string } => {
+    (
+      email: string,
+      password: string,
+      role: "patient" | "doctor" = "patient",
+    ): { success: boolean; error?: string } => {
       const trimmedEmail = email.trim().toLowerCase();
 
       if (!trimmedEmail) {
@@ -84,9 +92,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
       }
 
-      const matched = (patientsData as { id: number; email: string; fullName: string }[]).find(
-        (p) => p.email.toLowerCase() === trimmedEmail,
-      );
+      if (role === "doctor") {
+        const matched = (
+          doctorsData as { id: number; email: string; name: string }[]
+        ).find((d) => d.email.toLowerCase() === trimmedEmail);
+
+        if (!matched) {
+          return {
+            success: false,
+            error: "No doctor account found with that email address.",
+          };
+        }
+
+        const user: AuthUser = {
+          doctorId: matched.id,
+          email: matched.email,
+          fullName: matched.name,
+          role: "doctor",
+        };
+
+        setCurrentUser(user);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+        return { success: true };
+      }
+
+      // Patient login
+      const matched = (
+        patientsData as { id: number; email: string; fullName: string }[]
+      ).find((p) => p.email.toLowerCase() === trimmedEmail);
 
       if (!matched) {
         return {
@@ -99,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         patientId: matched.id,
         email: matched.email,
         fullName: matched.fullName,
+        role: "patient",
       };
 
       setCurrentUser(user);
@@ -110,10 +144,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /** Clear auth state and redirect to /login */
   const logout = useCallback(() => {
+    const role = currentUser?.role;
     setCurrentUser(null);
     localStorage.removeItem(STORAGE_KEY);
-    navigate("/login", { replace: true });
-  }, [navigate]);
+    if (role === "doctor") {
+      navigate("/doctor-login", { replace: true });
+    } else {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate, currentUser]);
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, currentUser, login, logout }}>

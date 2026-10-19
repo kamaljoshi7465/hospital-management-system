@@ -1,23 +1,32 @@
-
+import { type ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import type { ReactNode } from "react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  allowedRole?: "patient" | "doctor";
 }
 
-/**
- * Wraps a route that requires the user to be authenticated.
- * If not logged in, redirects to /login, saving the attempted path
- * in location state so we can redirect back after login if desired.
- */
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isLoggedIn } = useAuth();
+export default function ProtectedRoute({
+  children,
+  allowedRole = "patient",
+}: ProtectedRouteProps) {
+  const { isLoggedIn, currentUser } = useAuth();
   const location = useLocation();
 
   if (!isLoggedIn) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    const targetLogin =
+      allowedRole === "doctor" ? "/doctor-login" : "/login";
+    return <Navigate to={targetLogin} state={{ from: location }} replace />;
+  }
+
+  // If wrong role is authenticated, redirect to appropriate portal
+  if (allowedRole === "doctor" && currentUser?.role !== "doctor") {
+    return <Navigate to="/doctor-login" replace />;
+  }
+
+  if (allowedRole === "patient" && currentUser?.role !== "patient") {
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
