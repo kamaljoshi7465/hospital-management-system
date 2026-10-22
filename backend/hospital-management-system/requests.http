@@ -1,0 +1,29 @@
+
+### 1. Create user
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "name": "Kamal Joshi",
+  "email": "kamal@example.com",
+  "role": "DOCTOR"
+}
+
+### 2. Get all users
+GET http://localhost:8080/api/users
+
+### 3. Get user by ID
+GET http://localhost:8080/api/users/1
+
+### 4. Update user
+PUT http://localhost:8080/api/users/1
+Content-Type: application/json
+
+{
+  "name": "Kamal Chandra Joshi",
+  "email": "kamal@example.com",
+  "role": "ADMIN"
+}
+
+### 5. Delete user
+DELETE http://localhost:8080/api/users/1
