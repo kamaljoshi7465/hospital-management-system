@@ -1,0 +1,86 @@
+[
+  {
+    "id": 101,
+    "patientId": 1,
+    "doctorId": 1,
+    "appointmentDate": "2026-11-02",
+    "startTime": "10:00",
+    "endTime": "10:30",
+    "status": "CONFIRMED",
+    "reason": "General health checkup & blood sugar review",
+    "consultationType": "IN_PERSON",
+    "createdAt": "2026-10-10T09:30:00+05:30"
+  },
+  {
+    "id": 102,
+    "patientId": 1,
+    "doctorId": 2,
+    "appointmentDate": "2026-11-12",
+    "startTime": "14:30",
+    "endTime": "15:00",
+    "status": "BOOKED",
+    "reason": "Cardiology screening & ECG discussion",
+    "consultationType": "ONLINE",
+    "createdAt": "2026-10-14T11:15:00+05:30"
+  },
+  {
+    "id": 103,
+    "patientId": 1,
+    "doctorId": 1,
+    "appointmentDate": "2026-10-08",
+    "startTime": "09:30",
+    "endTime": "10:00",
+    "status": "COMPLETED",
+    "reason": "Routine consultation & seasonal allergy review",
+    "consultationType": "IN_PERSON",
+    "createdAt": "2026-10-01T12:00:00+05:30"
+  },
+  {
+    "id": 104,
+    "patientId": 1,
+    "doctorId": 6,
+    "appointmentDate": "2026-09-22",
+    "startTime": "11:30",
+    "endTime": "12:00",
+    "status": "COMPLETED",
+    "reason": "Dermatology consultation for rash",
+    "consultationType": "ONLINE",
+    "createdAt": "2026-09-18T10:00:00+05:30"
+  },
+  {
+    "id": 105,
+    "patientId": 1,
+    "doctorId": 5,
+    "appointmentDate": "2026-09-05",
+    "startTime": "15:00",
+    "endTime": "15:30",
+    "status": "CANCELLED",
+    "reason": "Left knee stiffness follow-up",
+    "consultationType": "IN_PERSON",
+    "createdAt": "2026-08-30T16:20:00+05:30"
+  },
+  {
+    "id": 106,
+    "patientId": 2,
+    "doctorId": 2,
+    "appointmentDate": "2026-11-04",
+    "startTime": "11:00",
+    "endTime": "11:30",
+    "status": "CONFIRMED",
+    "reason": "Follow-up consultation",
+    "consultationType": "IN_PERSON",
+    "createdAt": "2026-10-11T14:20:00+05:30"
+  },
+  {
+    "id": 107,
+    "patientId": 2,
+    "doctorId": 4,
+    "appointmentDate": "2026-10-12",
+    "startTime": "14:00",
+    "endTime": "14:30",
+    "status": "CANCELLED",
+    "reason": "Pediatric consultation for fever",
+    "consultationType": "ONLINE",
+    "createdAt": "2026-10-09T11:30:00+05:30"
+  }
+]

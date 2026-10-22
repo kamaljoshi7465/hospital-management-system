@@ -1,0 +1,72 @@
+{
+  "doctorId": 1,
+  "timezone": "Asia/Kolkata",
+  "slotDurationMinutes": 30,
+  "weeklySchedule": [
+    {
+      "dayOfWeek": "MONDAY",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "breaks": [
+        {
+          "startTime": "13:00",
+          "endTime": "14:00"
+        }
+      ]
+    },
+    {
+      "dayOfWeek": "TUESDAY",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "breaks": [
+        {
+          "startTime": "13:00",
+          "endTime": "14:00"
+        }
+      ]
+    },
+    {
+      "dayOfWeek": "WEDNESDAY",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "breaks": [
+        {
+          "startTime": "13:00",
+          "endTime": "14:00"
+        }
+      ]
+    },
+    {
+      "dayOfWeek": "THURSDAY",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "breaks": [
+        {
+          "startTime": "13:00",
+          "endTime": "14:00"
+        }
+      ]
+    },
+    {
+      "dayOfWeek": "FRIDAY",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "breaks": [
+        {
+          "startTime": "13:00",
+          "endTime": "14:00"
+        }
+      ]
+    },
+    {
+      "dayOfWeek": "SATURDAY",
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "breaks": []
+    }
+  ],
+  "unavailableDates": [
+    "2026-11-14",
+    "2026-11-25"
+  ]
+}

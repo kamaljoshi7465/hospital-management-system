@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "fullName": "Rahul Verma",
+    "email": "rahul.verma@example.com",
+    "phone": "+91 98765 43210",
+    "dateOfBirth": "1998-05-15",
+    "gender": "MALE",
+    "bloodGroup": "B+",
+    "address": {
+      "city": "Noida",
+      "state": "Uttar Pradesh",
+      "country": "India"
+    },
+    "createdAt": "2026-10-01T10:00:00+05:30",
+    "emergencyContact": {
+      "name": "Sunita Verma",
+      "relationship": "Mother",
+      "phone": "+91 98765 43219"
+    },
+    "allergies": ["Penicillin", "Dust Mites"],
+    "chronicConditions": ["Mild Hypertension (controlled)"],
+    "vitals": {
+      "bloodPressure": "118/78",
+      "heartRate": 72,
+      "bloodSugar": 94,
+      "weightKg": 71.5,
+      "heightCm": 178,
+      "temperatureF": 98.4,
+      "lastUpdated": "2026-10-14"
+    },
+    "medications": [
+      {
+        "id": "med-1",
+        "name": "Telmisartan 40mg",
+        "dosage": "1 tablet daily",
+        "frequency": "Morning after breakfast",
+        "doctor": "Dr. Amit Sharma",
+        "refillStatus": "Active"
+      },
+      {
+        "id": "med-2",
+        "name": "Vitamin D3 60K",
+        "dosage": "1 capsule weekly",
+        "frequency": "Sunday with milk",
+        "doctor": "Dr. Amit Sharma",
+        "refillStatus": "Refill Due"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "fullName": "Priya Singh",
+    "email": "priya.singh@example.com",
+    "phone": "+91 98111 22334",
+    "dateOfBirth": "1997-08-20",
+    "gender": "FEMALE",
+    "bloodGroup": "O+",
+    "address": {
+      "city": "Ghaziabad",
+      "state": "Uttar Pradesh",
+      "country": "India"
+    },
+    "createdAt": "2026-10-02T11:00:00+05:30",
+    "emergencyContact": {
+      "name": "Rohan Singh",
+      "relationship": "Brother",
+      "phone": "+91 98111 22339"
+    },
+    "allergies": ["Sulfa Drugs"],
+    "chronicConditions": [],
+    "vitals": {
+      "bloodPressure": "112/74",
+      "heartRate": 76,
+      "bloodSugar": 88,
+      "weightKg": 58,
+      "heightCm": 164,
+      "temperatureF": 98.6,
+      "lastUpdated": "2026-10-12"
+    },
+    "medications": [
+      {
+        "id": "med-3",
+        "name": "Cetirizine 10mg",
+        "dosage": "1 tablet as needed",
+        "frequency": "At night",
+        "doctor": "Dr. Meera Nambiar",
+        "refillStatus": "Active"
+      }
+    ]
+  }
+]
