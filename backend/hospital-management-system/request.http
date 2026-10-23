@@ -1,0 +1,857 @@
+### ═══════════════════════════════════════════════════════════════
+###  Hospital Management System – API Sample Requests
+###  Base URL: http://localhost:8080
+###  Compatible with IntelliJ HTTP Client / VS Code REST Client
+### ═══════════════════════════════════════════════════════════════
+
+@baseUrl = http://localhost:8080
+
+### ───────────────────────────────────────────────────────────────
+###  USERS  (/api/users)
+### ───────────────────────────────────────────────────────────────
+
+### 1. Create user – ADMIN
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Kamal Joshi",
+  "email": "kamal@example.com",
+  "role": "ADMIN"
+}
+
+### 2. Create user – DOCTOR role
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Amit Sharma",
+  "email": "amit.sharma@hospital.com",
+  "role": "DOCTOR"
+}
+
+### 3. Create user – PATIENT role
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Rahul Verma",
+  "email": "rahul.verma@example.com",
+  "role": "PATIENT"
+}
+
+### 4. Get all users
+GET {{baseUrl}}/api/users
+
+### 5. Get users filtered by role
+GET {{baseUrl}}/api/users?role=DOCTOR
+
+### 6. Get user by ID
+GET {{baseUrl}}/api/users/1
+
+### 7. Update user
+PUT {{baseUrl}}/api/users/1
+Content-Type: application/json
+
+{
+  "name": "Kamal Joshi (Updated)",
+  "email": "kamal.updated@example.com",
+  "role": "SUPER_ADMIN"
+}
+
+### 8. Delete user
+DELETE {{baseUrl}}/api/users/1
+
+### 9. Edge case – duplicate email (should return 409 Conflict)
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Duplicate Person",
+  "email": "kamal@example.com",
+  "role": "PATIENT"
+}
+
+### 10. Edge case – validation failure (blank name)
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "test@example.com",
+  "role": "PATIENT"
+}
+
+### 11. Edge case – invalid email format
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "not-an-email",
+  "role": "PATIENT"
+}
+
+### 12. Edge case – user not found
+GET {{baseUrl}}/api/users/99999
+
+
+### ───────────────────────────────────────────────────────────────
+###  DOCTORS  (/api/doctors)
+### ───────────────────────────────────────────────────────────────
+
+### 13. Create doctor – General Physician (with linked userId)
+POST {{baseUrl}}/api/doctors
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "name": "Dr. Amit Sharma",
+  "email": "amit.sharma@example.com",
+  "phone": "9000000001",
+  "specialization": "General Physician",
+  "qualification": "MBBS, MD (Internal Medicine)",
+  "experienceYears": 10,
+  "consultationFee": 600.00,
+  "rating": 4.8,
+  "totalReviews": 128,
+  "bio": "Experienced general physician specializing in preventive healthcare, lifestyle diseases, diabetes management, and chronic illness care.",
+  "image": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400",
+  "available": true,
+  "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  "workingHoursStart": "09:00",
+  "workingHoursEnd": "17:00",
+  "slotDurationMinutes": 30
+}
+
+### 14. Create doctor – Cardiologist
+POST {{baseUrl}}/api/doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Sneha Kulkarni",
+  "email": "sneha.kulkarni@example.com",
+  "phone": "9000000004",
+  "specialization": "Cardiologist",
+  "qualification": "MBBS, MD, DM (Cardiology)",
+  "experienceYears": 12,
+  "consultationFee": 900.00,
+  "rating": 4.9,
+  "totalReviews": 194,
+  "bio": "Senior interventional cardiologist with extensive experience in coronary interventions, hypertension management, and heart failure rehabilitation.",
+  "image": "https://images.unsplash.com/photo-1594824813682-127dbca03780?auto=format&fit=crop&q=80&w=400",
+  "available": true,
+  "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+  "workingHoursStart": "10:00",
+  "workingHoursEnd": "18:00",
+  "slotDurationMinutes": 30
+}
+
+### 15. Create doctor – Neurologist
+POST {{baseUrl}}/api/doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Rajesh Mehta",
+  "email": "rajesh.mehta@example.com",
+  "phone": "9000000005",
+  "specialization": "Neurologist",
+  "qualification": "MBBS, MD, DM (Neurology)",
+  "experienceYears": 15,
+  "consultationFee": 1200.00,
+  "rating": 4.9,
+  "totalReviews": 210,
+  "bio": "Distinguished neurologist specializing in migraine therapies, stroke prevention, neurodegenerative conditions, and epilepsy management.",
+  "image": "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400",
+  "available": true,
+  "workingDays": ["Tuesday", "Wednesday", "Thursday", "Saturday"],
+  "workingHoursStart": "09:30",
+  "workingHoursEnd": "16:30",
+  "slotDurationMinutes": 30
+}
+
+### 16. Create doctor – Pediatrician
+POST {{baseUrl}}/api/doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Ananya Iyer",
+  "email": "ananya.iyer@example.com",
+  "phone": "9000000006",
+  "specialization": "Pediatrician",
+  "qualification": "MBBS, DCH, MD (Pediatrics)",
+  "experienceYears": 8,
+  "consultationFee": 700.00,
+  "rating": 4.7,
+  "totalReviews": 142,
+  "bio": "Compassionate pediatrician committed to newborn care, child immunization, developmental milestones, and pediatric nutrition.",
+  "image": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400",
+  "available": true,
+  "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  "workingHoursStart": "10:00",
+  "workingHoursEnd": "17:00",
+  "slotDurationMinutes": 30
+}
+
+### 17. Create doctor – Dermatologist
+POST {{baseUrl}}/api/doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Meera Nambiar",
+  "email": "meera.nambiar@example.com",
+  "phone": "9000000008",
+  "specialization": "Dermatologist",
+  "qualification": "MBBS, MD (Dermatology & Venereology)",
+  "experienceYears": 9,
+  "consultationFee": 750.00,
+  "rating": 4.9,
+  "totalReviews": 180,
+  "bio": "Expert in clinical and aesthetic dermatology, acne scar therapies, laser treatments, eczema, and skin allergy management.",
+  "image": "https://images.unsplash.com/photo-1594824813715-92750e6332bf?auto=format&fit=crop&q=80&w=400",
+  "available": true,
+  "workingDays": ["Monday", "Tuesday", "Thursday", "Friday", "Saturday"],
+  "workingHoursStart": "10:00",
+  "workingHoursEnd": "16:00",
+  "slotDurationMinutes": 30
+}
+
+### 18. Get all doctors
+GET {{baseUrl}}/api/doctors
+
+### 19. Get only available doctors
+GET {{baseUrl}}/api/doctors?available=true
+
+### 20. Filter by specialization
+GET {{baseUrl}}/api/doctors?specialization=Cardiologist
+
+### 21. Search doctors by name or specialization
+GET {{baseUrl}}/api/doctors?q=neuro
+
+### 22. Get doctor by ID
+GET {{baseUrl}}/api/doctors/1
+
+### 23. Get doctor by linked user ID
+GET {{baseUrl}}/api/doctors/user/2
+
+### 24. Update doctor
+PUT {{baseUrl}}/api/doctors/1
+Content-Type: application/json
+
+{
+  "name": "Dr. Amit Sharma",
+  "email": "amit.sharma@example.com",
+  "phone": "9000000001",
+  "specialization": "General Physician",
+  "qualification": "MBBS, MD (Internal Medicine), Fellowship in Diabetes",
+  "experienceYears": 11,
+  "consultationFee": 650.00,
+  "rating": 4.8,
+  "totalReviews": 135,
+  "bio": "Updated bio for Dr. Amit Sharma.",
+  "image": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400",
+  "available": true,
+  "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  "workingHoursStart": "09:00",
+  "workingHoursEnd": "17:00",
+  "slotDurationMinutes": 30
+}
+
+### 24. Toggle doctor availability to false
+PATCH {{baseUrl}}/api/doctors/1/availability
+Content-Type: application/json
+
+{
+  "available": false
+}
+
+### 25. Toggle doctor availability back to true
+PATCH {{baseUrl}}/api/doctors/1/availability
+Content-Type: application/json
+
+{
+  "available": true
+}
+
+### 26. Delete doctor
+DELETE {{baseUrl}}/api/doctors/6
+
+### 27. Edge case – duplicate doctor email (409 Conflict)
+POST {{baseUrl}}/api/doctors
+Content-Type: application/json
+
+{
+  "name": "Duplicate Doctor",
+  "email": "amit.sharma@example.com",
+  "phone": "9999999999",
+  "specialization": "General Physician",
+  "qualification": "MBBS",
+  "experienceYears": 1,
+  "consultationFee": 300.00,
+  "rating": 3.0,
+  "totalReviews": 0,
+  "bio": "Test",
+  "image": "",
+  "available": true,
+  "workingDays": ["Monday"],
+  "workingHoursStart": "09:00",
+  "workingHoursEnd": "17:00",
+  "slotDurationMinutes": 30
+}
+
+### 28. Edge case – doctor not found
+GET {{baseUrl}}/api/doctors/99999
+
+### 29. Edge case – doctor with non-existent userId (400 Bad Request)
+POST {{baseUrl}}/api/doctors
+Content-Type: application/json
+
+{
+  "userId": 99999,
+  "name": "Dr. Ghost",
+  "email": "dr.ghost@example.com",
+  "phone": "9999999999",
+  "specialization": "General Physician",
+  "qualification": "MBBS",
+  "experienceYears": 2,
+  "consultationFee": 500.00,
+  "slotDurationMinutes": 30
+}
+
+### 30. Edge case – doctor with already-linked userId (409 Conflict)
+POST {{baseUrl}}/api/doctors
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "name": "Dr. Conflict",
+  "email": "dr.conflict@example.com",
+  "phone": "9999999998",
+  "specialization": "Cardiologist",
+  "qualification": "MBBS, MD",
+  "experienceYears": 5,
+  "consultationFee": 700.00,
+  "slotDurationMinutes": 30
+}
+
+
+### ───────────────────────────────────────────────────────────────
+###  DOCTOR AVAILABILITY  (/api/doctors/{id}/availability)
+### ───────────────────────────────────────────────────────────────
+
+### 29. Set full weekly schedule for doctor 1
+PUT {{baseUrl}}/api/doctors/1/availability
+Content-Type: application/json
+
+[
+  {
+    "dayOfWeek": "MONDAY",
+    "startTime": "09:00",
+    "endTime": "17:00",
+    "breaksJson": "[{\"startTime\":\"13:00\",\"endTime\":\"14:00\"}]",
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "dayOfWeek": "TUESDAY",
+    "startTime": "09:00",
+    "endTime": "17:00",
+    "breaksJson": "[{\"startTime\":\"13:00\",\"endTime\":\"14:00\"}]",
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "dayOfWeek": "WEDNESDAY",
+    "startTime": "09:00",
+    "endTime": "17:00",
+    "breaksJson": "[{\"startTime\":\"13:00\",\"endTime\":\"14:00\"}]",
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "dayOfWeek": "THURSDAY",
+    "startTime": "09:00",
+    "endTime": "17:00",
+    "breaksJson": "[{\"startTime\":\"13:00\",\"endTime\":\"14:00\"}]",
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "dayOfWeek": "FRIDAY",
+    "startTime": "09:00",
+    "endTime": "17:00",
+    "breaksJson": "[{\"startTime\":\"13:00\",\"endTime\":\"14:00\"}]",
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "dayOfWeek": "SATURDAY",
+    "startTime": "09:00",
+    "endTime": "13:00",
+    "breaksJson": "[]",
+    "timezone": "Asia/Kolkata"
+  }
+]
+
+### 30. Get full schedule for doctor 1
+GET {{baseUrl}}/api/doctors/1/availability
+
+### 31. Get Monday schedule for doctor 1
+GET {{baseUrl}}/api/doctors/1/availability/MONDAY
+
+### 32. Update only Thursday schedule
+PUT {{baseUrl}}/api/doctors/1/availability/THURSDAY
+Content-Type: application/json
+
+{
+  "dayOfWeek": "THURSDAY",
+  "startTime": "10:00",
+  "endTime": "16:00",
+  "breaksJson": "[{\"startTime\":\"13:00\",\"endTime\":\"13:30\"}]",
+  "timezone": "Asia/Kolkata"
+}
+
+### 33. Remove Sunday from schedule
+DELETE {{baseUrl}}/api/doctors/1/availability/SUNDAY
+
+### 34. Clear entire schedule for doctor 1
+DELETE {{baseUrl}}/api/doctors/1/availability
+
+
+### ───────────────────────────────────────────────────────────────
+###  PATIENTS  (/api/patients)
+### ───────────────────────────────────────────────────────────────
+
+### 35. Register patient – Rahul Verma (with linked userId)
+POST {{baseUrl}}/api/patients
+Content-Type: application/json
+
+{
+  "userId": 5,
+  "fullName": "Rahul Verma",
+  "email": "rahul.verma@example.com",
+  "phone": "+91 98765 43210",
+  "dateOfBirth": "1998-05-15",
+  "gender": "MALE",
+  "bloodGroup": "B+",
+  "address": {
+    "city": "Noida",
+    "state": "Uttar Pradesh",
+    "country": "India"
+  },
+  "emergencyContact": {
+    "name": "Sunita Verma",
+    "relationship": "Mother",
+    "phone": "+91 98765 43219"
+  },
+  "allergies": ["Penicillin", "Dust Mites"],
+  "chronicConditions": ["Mild Hypertension (controlled)"],
+  "vitals": {
+    "bloodPressure": "118/78",
+    "heartRate": 72,
+    "bloodSugar": 94,
+    "weightKg": 71.5,
+    "heightCm": 178,
+    "temperatureF": 98.4
+  }
+}
+
+### 36. Register patient – Priya Singh
+POST {{baseUrl}}/api/patients
+Content-Type: application/json
+
+{
+  "fullName": "Priya Singh",
+  "email": "priya.singh@example.com",
+  "phone": "+91 98111 22334",
+  "dateOfBirth": "1997-08-20",
+  "gender": "FEMALE",
+  "bloodGroup": "O+",
+  "address": {
+    "city": "Ghaziabad",
+    "state": "Uttar Pradesh",
+    "country": "India"
+  },
+  "emergencyContact": {
+    "name": "Rohan Singh",
+    "relationship": "Brother",
+    "phone": "+91 98111 22339"
+  },
+  "allergies": ["Sulfa Drugs"],
+  "chronicConditions": [],
+  "vitals": {
+    "bloodPressure": "112/74",
+    "heartRate": 76,
+    "bloodSugar": 88,
+    "weightKg": 58,
+    "heightCm": 164,
+    "temperatureF": 98.6
+  }
+}
+
+### 37. Get all patients
+GET {{baseUrl}}/api/patients
+
+### 38. Search patients
+GET {{baseUrl}}/api/patients?q=Rahul
+
+### 39. Get patient by ID
+GET {{baseUrl}}/api/patients/1
+
+### 40. Get patient by linked user ID
+GET {{baseUrl}}/api/patients/user/5
+
+### 41. Update patient (full update)
+PUT {{baseUrl}}/api/patients/1
+Content-Type: application/json
+
+{
+  "fullName": "Rahul Verma",
+  "email": "rahul.verma@example.com",
+  "phone": "+91 98765 43210",
+  "dateOfBirth": "1998-05-15",
+  "gender": "MALE",
+  "bloodGroup": "B+",
+  "address": {
+    "city": "Greater Noida",
+    "state": "Uttar Pradesh",
+    "country": "India"
+  },
+  "emergencyContact": {
+    "name": "Sunita Verma",
+    "relationship": "Mother",
+    "phone": "+91 98765 43219"
+  },
+  "allergies": ["Penicillin", "Dust Mites", "Pollen"],
+  "chronicConditions": ["Mild Hypertension (controlled)"],
+  "vitals": {
+    "bloodPressure": "120/80",
+    "heartRate": 74,
+    "bloodSugar": 96,
+    "weightKg": 72.0,
+    "heightCm": 178,
+    "temperatureF": 98.4
+  }
+}
+
+### 41. Update vitals only
+PUT {{baseUrl}}/api/patients/1/vitals
+Content-Type: application/json
+
+{
+  "bloodPressure": "116/76",
+  "heartRate": 70,
+  "bloodSugar": 92,
+  "weightKg": 71.0,
+  "heightCm": 178,
+  "temperatureF": 98.2
+}
+
+### 42. Delete patient
+DELETE {{baseUrl}}/api/patients/2
+
+### 43. Edge case – duplicate patient email
+POST {{baseUrl}}/api/patients
+Content-Type: application/json
+
+{
+  "fullName": "Duplicate Patient",
+  "email": "rahul.verma@example.com",
+  "phone": "9999999999",
+  "dateOfBirth": "2000-01-01",
+  "gender": "MALE",
+  "bloodGroup": "A+"
+}
+
+### 44. Edge case – invalid gender
+POST {{baseUrl}}/api/patients
+Content-Type: application/json
+
+{
+  "fullName": "Test Patient",
+  "email": "test.patient@example.com",
+  "phone": "9000000000",
+  "dateOfBirth": "1990-06-15",
+  "gender": "X",
+  "bloodGroup": "AB+"
+}
+
+### 45. Edge case – patient with non-existent userId (400 Bad Request)
+POST {{baseUrl}}/api/patients
+Content-Type: application/json
+
+{
+  "userId": 99999,
+  "fullName": "Ghost Patient",
+  "email": "ghost.patient@example.com",
+  "phone": "9999999999",
+  "dateOfBirth": "1995-01-01",
+  "gender": "MALE",
+  "bloodGroup": "O+"
+}
+
+### 46. Edge case – patient with already-linked userId (409 Conflict)
+POST {{baseUrl}}/api/patients
+Content-Type: application/json
+
+{
+  "userId": 5,
+  "fullName": "Conflict Patient",
+  "email": "conflict.patient@example.com",
+  "phone": "9999999998",
+  "dateOfBirth": "1995-02-02",
+  "gender": "FEMALE",
+  "bloodGroup": "B+"
+}
+
+
+
+### ───────────────────────────────────────────────────────────────
+###  MEDICATIONS  (/api/patients/{id}/medications)
+### ───────────────────────────────────────────────────────────────
+
+### 45. Add medication for patient 1
+POST {{baseUrl}}/api/patients/1/medications
+Content-Type: application/json
+
+{
+  "name": "Telmisartan 40mg",
+  "dosage": "1 tablet daily",
+  "frequency": "Morning after breakfast",
+  "doctorName": "Dr. Amit Sharma",
+  "refillStatus": "ACTIVE"
+}
+
+### 46. Add second medication for patient 1
+POST {{baseUrl}}/api/patients/1/medications
+Content-Type: application/json
+
+{
+  "name": "Vitamin D3 60K",
+  "dosage": "1 capsule weekly",
+  "frequency": "Sunday with milk",
+  "doctorName": "Dr. Amit Sharma",
+  "refillStatus": "REFILL_DUE"
+}
+
+### 47. Add medication for patient 2
+POST {{baseUrl}}/api/patients/2/medications
+Content-Type: application/json
+
+{
+  "name": "Cetirizine 10mg",
+  "dosage": "1 tablet as needed",
+  "frequency": "At night",
+  "doctorName": "Dr. Meera Nambiar",
+  "refillStatus": "ACTIVE"
+}
+
+### 48. Get medications for patient 1
+GET {{baseUrl}}/api/patients/1/medications
+
+### 49. Update medication 1 for patient 1
+PUT {{baseUrl}}/api/patients/1/medications/1
+Content-Type: application/json
+
+{
+  "name": "Telmisartan 40mg",
+  "dosage": "1 tablet daily",
+  "frequency": "Morning after breakfast",
+  "doctorName": "Dr. Amit Sharma",
+  "refillStatus": "REFILL_DUE"
+}
+
+### 50. Delete medication 2 from patient 1
+DELETE {{baseUrl}}/api/patients/1/medications/2
+
+
+### ───────────────────────────────────────────────────────────────
+###  APPOINTMENTS  (/api/appointments)
+### ───────────────────────────────────────────────────────────────
+
+### 51. Book appointment – patient 1, doctor 1, In-Person
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "doctorId": 1,
+  "appointmentDate": "2026-11-02",
+  "startTime": "10:00",
+  "endTime": "10:30",
+  "reason": "General health checkup & blood sugar review",
+  "consultationType": "IN_PERSON"
+}
+
+### 52. Book appointment – patient 1, doctor 2, Online
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "doctorId": 2,
+  "appointmentDate": "2026-11-12",
+  "startTime": "14:30",
+  "endTime": "15:00",
+  "reason": "Cardiology screening & ECG discussion",
+  "consultationType": "ONLINE"
+}
+
+### 53. Book appointment – patient 2, doctor 2, In-Person
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 2,
+  "doctorId": 2,
+  "appointmentDate": "2026-11-04",
+  "startTime": "11:00",
+  "endTime": "11:30",
+  "reason": "Follow-up consultation",
+  "consultationType": "IN_PERSON"
+}
+
+### 54. Book appointment – patient 1, doctor 6, Online
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "doctorId": 6,
+  "appointmentDate": "2026-11-20",
+  "startTime": "11:30",
+  "endTime": "12:00",
+  "reason": "Dermatology consultation for acne",
+  "consultationType": "ONLINE"
+}
+
+### 55. Get all appointments
+GET {{baseUrl}}/api/appointments
+
+### 56. Get appointments filtered by patient
+GET {{baseUrl}}/api/appointments?patientId=1
+
+### 57. Get appointments filtered by doctor
+GET {{baseUrl}}/api/appointments?doctorId=1
+
+### 58. Get appointments by doctor on specific date
+GET {{baseUrl}}/api/appointments?doctorId=1&date=2026-11-02
+
+### 59. Get appointments by patient and status
+GET {{baseUrl}}/api/appointments?patientId=1&status=CONFIRMED
+
+### 60. Get appointment by ID
+GET {{baseUrl}}/api/appointments/1
+
+### 61. Get appointments for a specific patient (clean path)
+GET {{baseUrl}}/api/appointments/patient/1
+
+### 62. Get appointments for a specific doctor (clean path)
+GET {{baseUrl}}/api/appointments/doctor/1
+
+### 63. Get doctor's appointments for today
+GET {{baseUrl}}/api/appointments/doctor/1/today
+
+### 64. Update appointment status to CONFIRMED
+PATCH {{baseUrl}}/api/appointments/1/status
+Content-Type: application/json
+
+{
+  "status": "CONFIRMED"
+}
+
+### 65. Update appointment status to COMPLETED
+PATCH {{baseUrl}}/api/appointments/1/status
+Content-Type: application/json
+
+{
+  "status": "COMPLETED"
+}
+
+### 66. Update appointment status to NO_SHOW
+PATCH {{baseUrl}}/api/appointments/1/status
+Content-Type: application/json
+
+{
+  "status": "NO_SHOW"
+}
+
+### 67. Reschedule appointment
+PATCH {{baseUrl}}/api/appointments/2/reschedule
+Content-Type: application/json
+
+{
+  "appointmentDate": "2026-11-15",
+  "startTime": "11:00",
+  "endTime": "11:30"
+}
+
+### 68. Cancel appointment (soft-delete via status update)
+DELETE {{baseUrl}}/api/appointments/3
+
+### 69. Edge case – double-book same slot (409 Conflict)
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 2,
+  "doctorId": 1,
+  "appointmentDate": "2026-11-02",
+  "startTime": "10:00",
+  "endTime": "10:30",
+  "reason": "Same slot conflict test",
+  "consultationType": "IN_PERSON"
+}
+
+### 70. Edge case – invalid status update
+PATCH {{baseUrl}}/api/appointments/1/status
+Content-Type: application/json
+
+{
+  "status": "INVALID_STATUS"
+}
+
+### 71. Edge case – appointment with non-existent doctor
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "doctorId": 99999,
+  "appointmentDate": "2026-12-01",
+  "startTime": "09:00",
+  "endTime": "09:30",
+  "reason": "Test",
+  "consultationType": "IN_PERSON"
+}
+
+### 72. Edge case – appointment with non-existent patient
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 99999,
+  "doctorId": 1,
+  "appointmentDate": "2026-12-01",
+  "startTime": "09:00",
+  "endTime": "09:30",
+  "reason": "Test",
+  "consultationType": "IN_PERSON"
+}
+
+### 73. Edge case – reschedule missing fields
+PATCH {{baseUrl}}/api/appointments/2/reschedule
+Content-Type: application/json
+
+{
+  "appointmentDate": "2026-12-10"
+}
+
+### 74. Edge case – invalid consultation type
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "doctorId": 1,
+  "appointmentDate": "2026-12-05",
+  "startTime": "10:00",
+  "endTime": "10:30",
+  "reason": "Test",
+  "consultationType": "WALK_IN"
+}

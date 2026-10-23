@@ -1,0 +1,2330 @@
+{
+  "info": {
+    "_postman_id": "c1f7a0b3-e28a-4d91-9e23-7a98b1d94f2b",
+    "name": "Hospital Management System API",
+    "description": "Comprehensive REST API Collection for Hospital Management System covering Users, Doctors, Doctor Availability, Patients, Medications, Appointments, and Edge Cases.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "USERS  (/api/users)",
+      "item": [
+        {
+          "name": "1. Create user \u2013 ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kamal Joshi\",\n  \"email\": \"kamal@example.com\",\n  \"role\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Create user \u2013 DOCTOR role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Amit Sharma\",\n  \"email\": \"amit.sharma@hospital.com\",\n  \"role\": \"DOCTOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Create user \u2013 PATIENT role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Verma\",\n  \"email\": \"rahul.verma@example.com\",\n  \"role\": \"PATIENT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get all users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Get users filtered by role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?role=DOCTOR",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "DOCTOR"
+                }
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Get user by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Update user",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kamal Joshi (Updated)\",\n  \"email\": \"kamal.updated@example.com\",\n  \"role\": \"SUPER_ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Delete user",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edge Cases & Validation",
+          "item": [
+            {
+              "name": "9. Edge case \u2013 duplicate email (should return 409 Conflict)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Duplicate Person\",\n  \"email\": \"kamal@example.com\",\n  \"role\": \"PATIENT\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "10. Edge case \u2013 validation failure (blank name)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"\",\n  \"email\": \"test@example.com\",\n  \"role\": \"PATIENT\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "11. Edge case \u2013 invalid email format",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"not-an-email\",\n  \"role\": \"PATIENT\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "12. Edge case \u2013 user not found",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/99999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "99999"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DOCTORS  (/api/doctors)",
+      "item": [
+        {
+          "name": "13. Create doctor \u2013 General Physician (with linked userId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 2,\n  \"name\": \"Dr. Amit Sharma\",\n  \"email\": \"amit.sharma@example.com\",\n  \"phone\": \"9000000001\",\n  \"specialization\": \"General Physician\",\n  \"qualification\": \"MBBS, MD (Internal Medicine)\",\n  \"experienceYears\": 10,\n  \"consultationFee\": 600.00,\n  \"rating\": 4.8,\n  \"totalReviews\": 128,\n  \"bio\": \"Experienced general physician specializing in preventive healthcare, lifestyle diseases, diabetes management, and chronic illness care.\",\n  \"image\": \"https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400\",\n  \"available\": true,\n  \"workingDays\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"],\n  \"workingHoursStart\": \"09:00\",\n  \"workingHoursEnd\": \"17:00\",\n  \"slotDurationMinutes\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "14. Create doctor \u2013 Cardiologist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Sneha Kulkarni\",\n  \"email\": \"sneha.kulkarni@example.com\",\n  \"phone\": \"9000000004\",\n  \"specialization\": \"Cardiologist\",\n  \"qualification\": \"MBBS, MD, DM (Cardiology)\",\n  \"experienceYears\": 12,\n  \"consultationFee\": 900.00,\n  \"rating\": 4.9,\n  \"totalReviews\": 194,\n  \"bio\": \"Senior interventional cardiologist with extensive experience in coronary interventions, hypertension management, and heart failure rehabilitation.\",\n  \"image\": \"https://images.unsplash.com/photo-1594824813682-127dbca03780?auto=format&fit=crop&q=80&w=400\",\n  \"available\": true,\n  \"workingDays\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\"],\n  \"workingHoursStart\": \"10:00\",\n  \"workingHoursEnd\": \"18:00\",\n  \"slotDurationMinutes\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "15. Create doctor \u2013 Neurologist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Rajesh Mehta\",\n  \"email\": \"rajesh.mehta@example.com\",\n  \"phone\": \"9000000005\",\n  \"specialization\": \"Neurologist\",\n  \"qualification\": \"MBBS, MD, DM (Neurology)\",\n  \"experienceYears\": 15,\n  \"consultationFee\": 1200.00,\n  \"rating\": 4.9,\n  \"totalReviews\": 210,\n  \"bio\": \"Distinguished neurologist specializing in migraine therapies, stroke prevention, neurodegenerative conditions, and epilepsy management.\",\n  \"image\": \"https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400\",\n  \"available\": true,\n  \"workingDays\": [\"Tuesday\", \"Wednesday\", \"Thursday\", \"Saturday\"],\n  \"workingHoursStart\": \"09:30\",\n  \"workingHoursEnd\": \"16:30\",\n  \"slotDurationMinutes\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "16. Create doctor \u2013 Pediatrician",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Ananya Iyer\",\n  \"email\": \"ananya.iyer@example.com\",\n  \"phone\": \"9000000006\",\n  \"specialization\": \"Pediatrician\",\n  \"qualification\": \"MBBS, DCH, MD (Pediatrics)\",\n  \"experienceYears\": 8,\n  \"consultationFee\": 700.00,\n  \"rating\": 4.7,\n  \"totalReviews\": 142,\n  \"bio\": \"Compassionate pediatrician committed to newborn care, child immunization, developmental milestones, and pediatric nutrition.\",\n  \"image\": \"https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400\",\n  \"available\": true,\n  \"workingDays\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"],\n  \"workingHoursStart\": \"10:00\",\n  \"workingHoursEnd\": \"17:00\",\n  \"slotDurationMinutes\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "17. Create doctor \u2013 Dermatologist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Meera Nambiar\",\n  \"email\": \"meera.nambiar@example.com\",\n  \"phone\": \"9000000008\",\n  \"specialization\": \"Dermatologist\",\n  \"qualification\": \"MBBS, MD (Dermatology & Venereology)\",\n  \"experienceYears\": 9,\n  \"consultationFee\": 750.00,\n  \"rating\": 4.9,\n  \"totalReviews\": 180,\n  \"bio\": \"Expert in clinical and aesthetic dermatology, acne scar therapies, laser treatments, eczema, and skin allergy management.\",\n  \"image\": \"https://images.unsplash.com/photo-1594824813715-92750e6332bf?auto=format&fit=crop&q=80&w=400\",\n  \"available\": true,\n  \"workingDays\": [\"Monday\", \"Tuesday\", \"Thursday\", \"Friday\", \"Saturday\"],\n  \"workingHoursStart\": \"10:00\",\n  \"workingHoursEnd\": \"16:00\",\n  \"slotDurationMinutes\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "18. Get all doctors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "19. Get only available doctors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors?available=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "available",
+                  "value": "true"
+                }
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "20. Filter by specialization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors?specialization=Cardiologist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "specialization",
+                  "value": "Cardiologist"
+                }
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "21. Search doctors by name or specialization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors?q=neuro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "neuro"
+                }
+              ],
+              "path": [
+                "api",
+                "doctors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "22. Get doctor by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "23. Get doctor by linked user ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/user/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "user",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "24. Update doctor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Amit Sharma\",\n  \"email\": \"amit.sharma@example.com\",\n  \"phone\": \"9000000001\",\n  \"specialization\": \"General Physician\",\n  \"qualification\": \"MBBS, MD (Internal Medicine), Fellowship in Diabetes\",\n  \"experienceYears\": 11,\n  \"consultationFee\": 650.00,\n  \"rating\": 4.8,\n  \"totalReviews\": 135,\n  \"bio\": \"Updated bio for Dr. Amit Sharma.\",\n  \"image\": \"https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400\",\n  \"available\": true,\n  \"workingDays\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"],\n  \"workingHoursStart\": \"09:00\",\n  \"workingHoursEnd\": \"17:00\",\n  \"slotDurationMinutes\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "24. Toggle doctor availability to false",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1",
+                "availability"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"available\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "25. Toggle doctor availability back to true",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1",
+                "availability"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"available\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "26. Delete doctor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edge Cases & Validation",
+          "item": [
+            {
+              "name": "27. Edge case \u2013 duplicate doctor email (409 Conflict)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/doctors",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "doctors"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Duplicate Doctor\",\n  \"email\": \"amit.sharma@example.com\",\n  \"phone\": \"9999999999\",\n  \"specialization\": \"General Physician\",\n  \"qualification\": \"MBBS\",\n  \"experienceYears\": 1,\n  \"consultationFee\": 300.00,\n  \"rating\": 3.0,\n  \"totalReviews\": 0,\n  \"bio\": \"Test\",\n  \"image\": \"\",\n  \"available\": true,\n  \"workingDays\": [\"Monday\"],\n  \"workingHoursStart\": \"09:00\",\n  \"workingHoursEnd\": \"17:00\",\n  \"slotDurationMinutes\": 30\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "28. Edge case \u2013 doctor not found",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/doctors/99999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "doctors",
+                    "99999"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "29. Edge case \u2013 doctor with non-existent userId (400 Bad Request)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/doctors",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "doctors"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 99999,\n  \"name\": \"Dr. Ghost\",\n  \"email\": \"dr.ghost@example.com\",\n  \"phone\": \"9999999999\",\n  \"specialization\": \"General Physician\",\n  \"qualification\": \"MBBS\",\n  \"experienceYears\": 2,\n  \"consultationFee\": 500.00,\n  \"slotDurationMinutes\": 30\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "30. Edge case \u2013 doctor with already-linked userId (409 Conflict)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/doctors",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "doctors"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 2,\n  \"name\": \"Dr. Conflict\",\n  \"email\": \"dr.conflict@example.com\",\n  \"phone\": \"9999999998\",\n  \"specialization\": \"Cardiologist\",\n  \"qualification\": \"MBBS, MD\",\n  \"experienceYears\": 5,\n  \"consultationFee\": 700.00,\n  \"slotDurationMinutes\": 30\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DOCTOR AVAILABILITY  (/api/doctors/{id}/availability)",
+      "item": [
+        {
+          "name": "29. Set full weekly schedule for doctor 1",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1",
+                "availability"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"dayOfWeek\": \"MONDAY\",\n    \"startTime\": \"09:00\",\n    \"endTime\": \"17:00\",\n    \"breaksJson\": \"[{\\\"startTime\\\":\\\"13:00\\\",\\\"endTime\\\":\\\"14:00\\\"}]\",\n    \"timezone\": \"Asia/Kolkata\"\n  },\n  {\n    \"dayOfWeek\": \"TUESDAY\",\n    \"startTime\": \"09:00\",\n    \"endTime\": \"17:00\",\n    \"breaksJson\": \"[{\\\"startTime\\\":\\\"13:00\\\",\\\"endTime\\\":\\\"14:00\\\"}]\",\n    \"timezone\": \"Asia/Kolkata\"\n  },\n  {\n    \"dayOfWeek\": \"WEDNESDAY\",\n    \"startTime\": \"09:00\",\n    \"endTime\": \"17:00\",\n    \"breaksJson\": \"[{\\\"startTime\\\":\\\"13:00\\\",\\\"endTime\\\":\\\"14:00\\\"}]\",\n    \"timezone\": \"Asia/Kolkata\"\n  },\n  {\n    \"dayOfWeek\": \"THURSDAY\",\n    \"startTime\": \"09:00\",\n    \"endTime\": \"17:00\",\n    \"breaksJson\": \"[{\\\"startTime\\\":\\\"13:00\\\",\\\"endTime\\\":\\\"14:00\\\"}]\",\n    \"timezone\": \"Asia/Kolkata\"\n  },\n  {\n    \"dayOfWeek\": \"FRIDAY\",\n    \"startTime\": \"09:00\",\n    \"endTime\": \"17:00\",\n    \"breaksJson\": \"[{\\\"startTime\\\":\\\"13:00\\\",\\\"endTime\\\":\\\"14:00\\\"}]\",\n    \"timezone\": \"Asia/Kolkata\"\n  },\n  {\n    \"dayOfWeek\": \"SATURDAY\",\n    \"startTime\": \"09:00\",\n    \"endTime\": \"13:00\",\n    \"breaksJson\": \"[]\",\n    \"timezone\": \"Asia/Kolkata\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "30. Get full schedule for doctor 1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1",
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "31. Get Monday schedule for doctor 1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1/availability/MONDAY",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1",
+                "availability",
+                "MONDAY"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "32. Update only Thursday schedule",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1/availability/THURSDAY",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1",
+                "availability",
+                "THURSDAY"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dayOfWeek\": \"THURSDAY\",\n  \"startTime\": \"10:00\",\n  \"endTime\": \"16:00\",\n  \"breaksJson\": \"[{\\\"startTime\\\":\\\"13:00\\\",\\\"endTime\\\":\\\"13:30\\\"}]\",\n  \"timezone\": \"Asia/Kolkata\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "33. Remove Sunday from schedule",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1/availability/SUNDAY",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1",
+                "availability",
+                "SUNDAY"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "34. Clear entire schedule for doctor 1",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/1/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "doctors",
+                "1",
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "PATIENTS  (/api/patients)",
+      "item": [
+        {
+          "name": "35. Register patient \u2013 Rahul Verma (with linked userId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 5,\n  \"fullName\": \"Rahul Verma\",\n  \"email\": \"rahul.verma@example.com\",\n  \"phone\": \"+91 98765 43210\",\n  \"dateOfBirth\": \"1998-05-15\",\n  \"gender\": \"MALE\",\n  \"bloodGroup\": \"B+\",\n  \"address\": {\n    \"city\": \"Noida\",\n    \"state\": \"Uttar Pradesh\",\n    \"country\": \"India\"\n  },\n  \"emergencyContact\": {\n    \"name\": \"Sunita Verma\",\n    \"relationship\": \"Mother\",\n    \"phone\": \"+91 98765 43219\"\n  },\n  \"allergies\": [\"Penicillin\", \"Dust Mites\"],\n  \"chronicConditions\": [\"Mild Hypertension (controlled)\"],\n  \"vitals\": {\n    \"bloodPressure\": \"118/78\",\n    \"heartRate\": 72,\n    \"bloodSugar\": 94,\n    \"weightKg\": 71.5,\n    \"heightCm\": 178,\n    \"temperatureF\": 98.4\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "36. Register patient \u2013 Priya Singh",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Priya Singh\",\n  \"email\": \"priya.singh@example.com\",\n  \"phone\": \"+91 98111 22334\",\n  \"dateOfBirth\": \"1997-08-20\",\n  \"gender\": \"FEMALE\",\n  \"bloodGroup\": \"O+\",\n  \"address\": {\n    \"city\": \"Ghaziabad\",\n    \"state\": \"Uttar Pradesh\",\n    \"country\": \"India\"\n  },\n  \"emergencyContact\": {\n    \"name\": \"Rohan Singh\",\n    \"relationship\": \"Brother\",\n    \"phone\": \"+91 98111 22339\"\n  },\n  \"allergies\": [\"Sulfa Drugs\"],\n  \"chronicConditions\": [],\n  \"vitals\": {\n    \"bloodPressure\": \"112/74\",\n    \"heartRate\": 76,\n    \"bloodSugar\": 88,\n    \"weightKg\": 58,\n    \"heightCm\": 164,\n    \"temperatureF\": 98.6\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "37. Get all patients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "38. Search patients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients?q=Rahul",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Rahul"
+                }
+              ],
+              "path": [
+                "api",
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "39. Get patient by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "40. Get patient by linked user ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/user/5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "user",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "41. Update patient (full update)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Rahul Verma\",\n  \"email\": \"rahul.verma@example.com\",\n  \"phone\": \"+91 98765 43210\",\n  \"dateOfBirth\": \"1998-05-15\",\n  \"gender\": \"MALE\",\n  \"bloodGroup\": \"B+\",\n  \"address\": {\n    \"city\": \"Greater Noida\",\n    \"state\": \"Uttar Pradesh\",\n    \"country\": \"India\"\n  },\n  \"emergencyContact\": {\n    \"name\": \"Sunita Verma\",\n    \"relationship\": \"Mother\",\n    \"phone\": \"+91 98765 43219\"\n  },\n  \"allergies\": [\"Penicillin\", \"Dust Mites\", \"Pollen\"],\n  \"chronicConditions\": [\"Mild Hypertension (controlled)\"],\n  \"vitals\": {\n    \"bloodPressure\": \"120/80\",\n    \"heartRate\": 74,\n    \"bloodSugar\": 96,\n    \"weightKg\": 72.0,\n    \"heightCm\": 178,\n    \"temperatureF\": 98.4\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "41. Update vitals only",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/1/vitals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "1",
+                "vitals"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bloodPressure\": \"116/76\",\n  \"heartRate\": 70,\n  \"bloodSugar\": 92,\n  \"weightKg\": 71.0,\n  \"heightCm\": 178,\n  \"temperatureF\": 98.2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "42. Delete patient",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edge Cases & Validation",
+          "item": [
+            {
+              "name": "43. Edge case \u2013 duplicate patient email",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/patients",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "patients"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Duplicate Patient\",\n  \"email\": \"rahul.verma@example.com\",\n  \"phone\": \"9999999999\",\n  \"dateOfBirth\": \"2000-01-01\",\n  \"gender\": \"MALE\",\n  \"bloodGroup\": \"A+\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "44. Edge case \u2013 invalid gender",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/patients",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "patients"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Test Patient\",\n  \"email\": \"test.patient@example.com\",\n  \"phone\": \"9000000000\",\n  \"dateOfBirth\": \"1990-06-15\",\n  \"gender\": \"X\",\n  \"bloodGroup\": \"AB+\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "45. Edge case \u2013 patient with non-existent userId (400 Bad Request)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/patients",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "patients"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 99999,\n  \"fullName\": \"Ghost Patient\",\n  \"email\": \"ghost.patient@example.com\",\n  \"phone\": \"9999999999\",\n  \"dateOfBirth\": \"1995-01-01\",\n  \"gender\": \"MALE\",\n  \"bloodGroup\": \"O+\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "46. Edge case \u2013 patient with already-linked userId (409 Conflict)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/patients",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "patients"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 5,\n  \"fullName\": \"Conflict Patient\",\n  \"email\": \"conflict.patient@example.com\",\n  \"phone\": \"9999999998\",\n  \"dateOfBirth\": \"1995-02-02\",\n  \"gender\": \"FEMALE\",\n  \"bloodGroup\": \"B+\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MEDICATIONS  (/api/patients/{id}/medications)",
+      "item": [
+        {
+          "name": "45. Add medication for patient 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/1/medications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "1",
+                "medications"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Telmisartan 40mg\",\n  \"dosage\": \"1 tablet daily\",\n  \"frequency\": \"Morning after breakfast\",\n  \"doctorName\": \"Dr. Amit Sharma\",\n  \"refillStatus\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "46. Add second medication for patient 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/1/medications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "1",
+                "medications"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vitamin D3 60K\",\n  \"dosage\": \"1 capsule weekly\",\n  \"frequency\": \"Sunday with milk\",\n  \"doctorName\": \"Dr. Amit Sharma\",\n  \"refillStatus\": \"REFILL_DUE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "47. Add medication for patient 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/2/medications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "2",
+                "medications"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cetirizine 10mg\",\n  \"dosage\": \"1 tablet as needed\",\n  \"frequency\": \"At night\",\n  \"doctorName\": \"Dr. Meera Nambiar\",\n  \"refillStatus\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "48. Get medications for patient 1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/1/medications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "1",
+                "medications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "49. Update medication 1 for patient 1",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/1/medications/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "1",
+                "medications",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Telmisartan 40mg\",\n  \"dosage\": \"1 tablet daily\",\n  \"frequency\": \"Morning after breakfast\",\n  \"doctorName\": \"Dr. Amit Sharma\",\n  \"refillStatus\": \"REFILL_DUE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "50. Delete medication 2 from patient 1",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/1/medications/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "patients",
+                "1",
+                "medications",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "APPOINTMENTS  (/api/appointments)",
+      "item": [
+        {
+          "name": "51. Book appointment \u2013 patient 1, doctor 1, In-Person",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"doctorId\": 1,\n  \"appointmentDate\": \"2026-11-02\",\n  \"startTime\": \"10:00\",\n  \"endTime\": \"10:30\",\n  \"reason\": \"General health checkup & blood sugar review\",\n  \"consultationType\": \"IN_PERSON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "52. Book appointment \u2013 patient 1, doctor 2, Online",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"doctorId\": 2,\n  \"appointmentDate\": \"2026-11-12\",\n  \"startTime\": \"14:30\",\n  \"endTime\": \"15:00\",\n  \"reason\": \"Cardiology screening & ECG discussion\",\n  \"consultationType\": \"ONLINE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "53. Book appointment \u2013 patient 2, doctor 2, In-Person",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 2,\n  \"doctorId\": 2,\n  \"appointmentDate\": \"2026-11-04\",\n  \"startTime\": \"11:00\",\n  \"endTime\": \"11:30\",\n  \"reason\": \"Follow-up consultation\",\n  \"consultationType\": \"IN_PERSON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "54. Book appointment \u2013 patient 1, doctor 6, Online",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"doctorId\": 6,\n  \"appointmentDate\": \"2026-11-20\",\n  \"startTime\": \"11:30\",\n  \"endTime\": \"12:00\",\n  \"reason\": \"Dermatology consultation for acne\",\n  \"consultationType\": \"ONLINE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "55. Get all appointments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "56. Get appointments filtered by patient",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments?patientId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "patientId",
+                  "value": "1"
+                }
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "57. Get appointments filtered by doctor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments?doctorId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "doctorId",
+                  "value": "1"
+                }
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "58. Get appointments by doctor on specific date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments?doctorId=1&date=2026-11-02",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "doctorId",
+                  "value": "1"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-11-02"
+                }
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "59. Get appointments by patient and status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments?patientId=1&status=CONFIRMED",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "patientId",
+                  "value": "1"
+                },
+                {
+                  "key": "status",
+                  "value": "CONFIRMED"
+                }
+              ],
+              "path": [
+                "api",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "60. Get appointment by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "61. Get appointments for a specific patient (clean path)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/patient/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "patient",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "62. Get appointments for a specific doctor (clean path)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/doctor/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "doctor",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "63. Get doctor's appointments for today",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/doctor/1/today",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "doctor",
+                "1",
+                "today"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "64. Update appointment status to CONFIRMED",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "1",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "65. Update appointment status to COMPLETED",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "1",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "66. Update appointment status to NO_SHOW",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "1",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"NO_SHOW\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "67. Reschedule appointment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/2/reschedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "2",
+                "reschedule"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentDate\": \"2026-11-15\",\n  \"startTime\": \"11:00\",\n  \"endTime\": \"11:30\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "68. Cancel appointment (soft-delete via status update)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appointments",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edge Cases & Validation",
+          "item": [
+            {
+              "name": "69. Edge case \u2013 double-book same slot (409 Conflict)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/appointments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "appointments"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"patientId\": 2,\n  \"doctorId\": 1,\n  \"appointmentDate\": \"2026-11-02\",\n  \"startTime\": \"10:00\",\n  \"endTime\": \"10:30\",\n  \"reason\": \"Same slot conflict test\",\n  \"consultationType\": \"IN_PERSON\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "70. Edge case \u2013 invalid status update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/appointments/1/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "appointments",
+                    "1",
+                    "status"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"INVALID_STATUS\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "71. Edge case \u2013 appointment with non-existent doctor",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/appointments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "appointments"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"patientId\": 1,\n  \"doctorId\": 99999,\n  \"appointmentDate\": \"2026-12-01\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"09:30\",\n  \"reason\": \"Test\",\n  \"consultationType\": \"IN_PERSON\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "72. Edge case \u2013 appointment with non-existent patient",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/appointments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "appointments"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"patientId\": 99999,\n  \"doctorId\": 1,\n  \"appointmentDate\": \"2026-12-01\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"09:30\",\n  \"reason\": \"Test\",\n  \"consultationType\": \"IN_PERSON\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "73. Edge case \u2013 reschedule missing fields",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/appointments/2/reschedule",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "appointments",
+                    "2",
+                    "reschedule"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"appointmentDate\": \"2026-12-10\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "74. Edge case \u2013 invalid consultation type",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/appointments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "appointments"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"patientId\": 1,\n  \"doctorId\": 1,\n  \"appointmentDate\": \"2026-12-05\",\n  \"startTime\": \"10:00\",\n  \"endTime\": \"10:30\",\n  \"reason\": \"Test\",\n  \"consultationType\": \"WALK_IN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
