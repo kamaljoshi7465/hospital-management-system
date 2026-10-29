@@ -30,16 +30,18 @@ export default function DoctorPortalProfilePage() {
 
   const [saved, setSaved] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateDoctor(currentDoctor.id, {
+    const ok = await updateDoctor(currentDoctor.id, {
       ...formData,
       experienceYears: Number(formData.experienceYears),
       consultationFee: Number(formData.consultationFee),
       slotDurationMinutes: Number(formData.slotDurationMinutes),
     });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    if (ok) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    }
   };
 
   return (

@@ -607,7 +607,7 @@ export default function PatientDashboardPage() {
               <div className="rounded-xl bg-slate-50 p-3">
                 <span className="text-[10px] text-slate-400 font-medium">Heart Rate</span>
                 <p className="text-sm font-bold text-slate-800 mt-0.5">
-                  {currentPatient.vitals?.heartRate || 72} <span className="text-[10px] font-normal text-slate-400">bpm</span>
+                  {currentPatient.vitals?.heartRate ?? "—"} <span className="text-[10px] font-normal text-slate-400">{currentPatient.vitals?.heartRate == null ? "" : "bpm"}</span>
                 </p>
               </div>
               <div className="rounded-xl bg-slate-50 p-3">

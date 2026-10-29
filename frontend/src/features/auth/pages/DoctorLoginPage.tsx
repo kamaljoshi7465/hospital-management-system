@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   HeartPulse,
   Mail,
@@ -12,21 +12,12 @@ import {
   Stethoscope,
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
-import doctorsData from "../../../data/doctors.json";
-
-const DEMO_DOCTORS = doctorsData.map((d) => ({
-  id: d.id,
-  name: d.name,
-  email: d.email,
-  specialization: d.specialization,
-}));
 
 export default function DoctorLoginPage() {
   const { login } = useAuth();
-  const navigate = useNavigate();
 
-  const [email, setEmail] = useState(DEMO_DOCTORS[0].email);
-  const [password, setPassword] = useState("medicare123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -36,26 +27,13 @@ export default function DoctorLoginPage() {
     setError(null);
     setLoading(true);
 
-    await new Promise((res) => setTimeout(res, 500));
+    const result = await login(email, password, "doctor");
 
-    const result = login(email, password, "doctor");
-
-    if (result.success) {
-      navigate("/doctor-portal/dashboard", { replace: true });
-    } else {
+    if (!result.success) {
       setError(result.error ?? "Login failed.");
       setLoading(false);
     }
   };
-
-  const getInitials = (name: string) =>
-    name
-      .split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((p) => p[0])
-      .join("")
-      .toUpperCase();
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-teal-50/20">
@@ -95,49 +73,8 @@ export default function DoctorLoginPage() {
             </div>
           </div>
 
-          {/* Demo Account Selector */}
-          <div className="mb-5 rounded-2xl bg-slate-50 p-2.5 ring-1 ring-slate-200/80">
-            <p className="mb-2 px-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-              Select Demo Doctor
-            </p>
-            <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto">
-              {DEMO_DOCTORS.map((doc) => {
-                const isSelected =
-                  email.toLowerCase() === doc.email.toLowerCase();
-                return (
-                  <button
-                    key={doc.id}
-                    type="button"
-                    onClick={() => {
-                      setEmail(doc.email);
-                      setPassword("medicare123");
-                      setError(null);
-                    }}
-                    className={`flex items-center gap-2 rounded-xl p-2 text-left transition ${
-                      isSelected
-                        ? "bg-white font-semibold shadow-xs ring-2 ring-[#1265b5]"
-                        : "text-slate-600 hover:bg-white/60 hover:text-slate-900"
-                    }`}
-                  >
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#10243e] text-[10px] font-bold text-white">
-                      {getInitials(doc.name)}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs leading-tight">
-                        {doc.name}
-                      </p>
-                      <p className="text-[10px] text-slate-400 font-normal truncate">
-                        {doc.specialization}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Form */}
-          <form onSubmit={handleLoginSubmit} className="space-y-4" noValidate>
+          <form onSubmit={handleLoginSubmit} className="space-y-4">
             {/* Email */}
             <div>
               <label
@@ -173,9 +110,7 @@ export default function DoctorLoginPage() {
                 >
                   Password
                 </label>
-                <span className="text-[11px] text-slate-400">
-                  Demo: <code className="font-semibold text-teal-700">medicare123</code>
-                </span>
+
               </div>
               <div className="relative">
                 <Lock

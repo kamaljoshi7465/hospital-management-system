@@ -1,172 +1,73 @@
-
 /* eslint-disable react-refresh/only-export-components */
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useCallback, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import patientsData from "../data/patients.json";
-import doctorsData from "../data/doctors.json";
+import { useQueryClient } from "@tanstack/react-query";
+import { type AuthenticatedUser, type SignupInput, type UserRole } from "../api/auth";
+import { getAccessToken, setAccessToken } from "../api/client";
+import { authQueryKeys, useAuthProfileQuery, useLoginMutation, useLogoutMutation, useSignupMutation } from "../hooks/useAuthApi";
 
-/* ------------------------------------------------------------------ */
-/*  Types                                                               */
-/* ------------------------------------------------------------------ */
-
-export interface AuthUser {
-  patientId?: number;
-  doctorId?: number;
-  email: string;
-  fullName: string;
-  role: "patient" | "doctor";
-}
-
+export type AppRole = Lowercase<UserRole>;
+export type AuthUser = Omit<AuthenticatedUser, "role"> & { fullName: string; role: AppRole };
 interface AuthContextValue {
-  isLoggedIn: boolean;
-  currentUser: AuthUser | null;
-  login: (
-    email: string,
-    password: string,
-    role?: "patient" | "doctor",
-  ) => { success: boolean; error?: string };
-  logout: () => void;
+  isLoggedIn: boolean; isLoading: boolean; currentUser: AuthUser | null;
+  login: (email: string, password: string, expectedRole?: AppRole) => Promise<{ success: boolean; error?: string }>;
+  signup: (data: SignupInput) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Constants                                                           */
-/* ------------------------------------------------------------------ */
-
-/** Static demo password — same for every demo account */
-const DEMO_PASSWORD = "medicare123";
-const STORAGE_KEY = "medicare_auth_user";
-
-/* ------------------------------------------------------------------ */
-/*  Context                                                             */
-/* ------------------------------------------------------------------ */
-
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
-/* ------------------------------------------------------------------ */
-/*  Provider                                                            */
-/* ------------------------------------------------------------------ */
+function toAuthUser(user: AuthenticatedUser): AuthUser {
+  return { ...user, fullName: user.name, role: user.role.toLowerCase() as AppRole };
+}
+function errorMessage(error: unknown) { return error instanceof Error ? error.message : "The request failed. Please try again."; }
+function roleHome(role: AppRole) {
+  if (role === "doctor") return "/doctor-portal/dashboard";
+  if (role === "admin" || role === "receptionist") return "/staff";
+  return "/patient/dashboard";
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const profileQuery = useAuthProfileQuery(Boolean(getAccessToken()));
+  const currentUser = profileQuery.data ? toAuthUser(profileQuery.data) : null;
+  const isLoading = Boolean(getAccessToken()) && profileQuery.isLoading;
+  const loginMutation = useLoginMutation();
+  const signupMutation = useSignupMutation();
+  const logoutMutation = useLogoutMutation();
 
-  // Rehydrate from localStorage on mount
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
+  const endSession = useCallback(() => {
+    setAccessToken(null);
+    queryClient.removeQueries({ queryKey: authQueryKeys.profile });
+  }, [queryClient]);
+
+  useEffect(() => {
+    const handleUnauthorized = () => { endSession(); navigate("/login", { replace: true, state: { sessionExpired: true } }); };
+    window.addEventListener("hospital:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("hospital:unauthorized", handleUnauthorized);
+  }, [endSession, navigate]);
+
+  const accept = (user: AuthenticatedUser, token: string) => {
+    setAccessToken(token); queryClient.setQueryData(authQueryKeys.profile, user); const normalized = toAuthUser(user); navigate(roleHome(normalized.role), { replace: true });
+  };
+  const login = async (email: string, password: string, expectedRole?: AppRole) => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? (JSON.parse(stored) as AuthUser) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  const isLoggedIn = currentUser !== null;
-
-  /**
-   * Attempt to log in with email + password.
-   * Validates against patients.json or doctors.json depending on role.
-   */
-  const login = useCallback(
-    (
-      email: string,
-      password: string,
-      role: "patient" | "doctor" = "patient",
-    ): { success: boolean; error?: string } => {
-      const trimmedEmail = email.trim().toLowerCase();
-
-      if (!trimmedEmail) {
-        return { success: false, error: "Please enter your email address." };
-      }
-      if (!password) {
-        return { success: false, error: "Please enter your password." };
-      }
-      if (password !== DEMO_PASSWORD) {
-        return {
-          success: false,
-          error: "Invalid credentials. Check the demo hint below.",
-        };
-      }
-
-      if (role === "doctor") {
-        const matched = (
-          doctorsData as { id: number; email: string; name: string }[]
-        ).find((d) => d.email.toLowerCase() === trimmedEmail);
-
-        if (!matched) {
-          return {
-            success: false,
-            error: "No doctor account found with that email address.",
-          };
-        }
-
-        const user: AuthUser = {
-          doctorId: matched.id,
-          email: matched.email,
-          fullName: matched.name,
-          role: "doctor",
-        };
-
-        setCurrentUser(user);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-        return { success: true };
-      }
-
-      // Patient login
-      const matched = (
-        patientsData as { id: number; email: string; fullName: string }[]
-      ).find((p) => p.email.toLowerCase() === trimmedEmail);
-
-      if (!matched) {
-        return {
-          success: false,
-          error: "No account found with that email address.",
-        };
-      }
-
-      const user: AuthUser = {
-        patientId: matched.id,
-        email: matched.email,
-        fullName: matched.fullName,
-        role: "patient",
-      };
-
-      setCurrentUser(user);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-      return { success: true };
-    },
-    [],
-  );
-
-  /** Clear auth state and redirect to /login */
-  const logout = useCallback(() => {
+      const result = await loginMutation.mutateAsync({ email: email.trim(), password });
+      const user = toAuthUser(result.user);
+      if (expectedRole && expectedRole !== user.role) return { success: false, error: `This account does not have the ${expectedRole} role.` };
+      accept(result.user, result.accessToken); return { success: true };
+    } catch (error) { return { success: false, error: errorMessage(error) }; }
+  };
+  const signup = async (data: SignupInput) => {
+    try { const result = await signupMutation.mutateAsync(data); accept(result.user, result.accessToken); return { success: true }; }
+    catch (error) { return { success: false, error: errorMessage(error) }; }
+  };
+  const logout = async () => {
     const role = currentUser?.role;
-    setCurrentUser(null);
-    localStorage.removeItem(STORAGE_KEY);
-    if (role === "doctor") {
-      navigate("/doctor-login", { replace: true });
-    } else {
-      navigate("/login", { replace: true });
-    }
-  }, [navigate, currentUser]);
+    try { if (getAccessToken()) await logoutMutation.mutateAsync(); } catch { /* always clear the local session */ }
+    endSession(); navigate(role === "doctor" ? "/doctor-login" : "/login", { replace: true });
+  };
 
-  return (
-    <AuthContext.Provider value={{ isLoggedIn, currentUser, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ isLoggedIn: currentUser !== null, isLoading, currentUser, login, signup, logout }}>{children}</AuthContext.Provider>;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Hook                                                                */
-/* ------------------------------------------------------------------ */
-
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
-  return ctx;
-}
+export function useAuth(): AuthContextValue { const context = useContext(AuthContext); if (!context) throw new Error("useAuth must be used inside <AuthProvider>"); return context; }

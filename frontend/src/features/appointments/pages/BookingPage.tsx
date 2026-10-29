@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useHospital } from "../../../context/HospitalContext";
 import type { ConsultationType } from "../../../types";
+import { useScheduleQuery } from "../../../hooks/useHospitalApi";
 
 function getDatesForNextDays(daysCount = 14) {
   const dates = [];
@@ -59,20 +60,17 @@ function getDatesForNextDays(daysCount = 14) {
   return dates;
 }
 
-const AVAILABLE_SLOTS = [
-  { start: "09:00", end: "09:30", period: "Morning" },
-  { start: "09:30", end: "10:00", period: "Morning" },
-  { start: "10:00", end: "10:30", period: "Morning" },
-  { start: "10:30", end: "11:00", period: "Morning" },
-  { start: "11:00", end: "11:30", period: "Morning" },
-  { start: "11:30", end: "12:00", period: "Morning" },
-  { start: "14:00", end: "14:30", period: "Afternoon" },
-  { start: "14:30", end: "15:00", period: "Afternoon" },
-  { start: "15:00", end: "15:30", period: "Afternoon" },
-  { start: "15:30", end: "16:00", period: "Afternoon" },
-  { start: "16:00", end: "16:30", period: "Evening" },
-  { start: "16:30", end: "17:00", period: "Evening" },
-];
+function slotsBetween(start: string, end: string, duration: number, breaks: { startTime: string; endTime: string }[] = []) {
+  const toMinutes = (time: string) => { const [h, m] = time.split(":").map(Number); return h * 60 + m; };
+  const toTime = (minutes: number) => `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+  const slots: { start: string; end: string; period: string }[] = [];
+  for (let cursor = toMinutes(start); cursor + duration <= toMinutes(end); cursor += duration) {
+    const finish = cursor + duration;
+    if (breaks.some(b => cursor < toMinutes(b.endTime) && finish > toMinutes(b.startTime))) continue;
+    slots.push({ start: toTime(cursor), end: toTime(finish), period: cursor < 12 * 60 ? "Morning" : cursor < 16 * 60 ? "Afternoon" : "Evening" });
+  }
+  return slots;
+}
 
 export default function BookingPage() {
   const { doctorId } = useParams<{ doctorId?: string }>();
@@ -88,6 +86,7 @@ export default function BookingPage() {
     }
     return doctors[0]?.id ?? 1;
   });
+  const { data: schedule = [] } = useScheduleQuery(selectedDoctorId);
 
   const [doctorFilter, setDoctorFilter] = useState<string>("ALL");
   const [slotPeriodFilter, setSlotPeriodFilter] = useState<"ALL" | "Morning" | "Afternoon" | "Evening">("ALL");
@@ -97,11 +96,11 @@ export default function BookingPage() {
   const [selectedDate, setSelectedDate] = useState<string>(
     availableDates[0]?.dateString ?? "",
   );
-  const [selectedSlot, setSelectedSlot] = useState<{
+  const [selectedSlotState, setSelectedSlot] = useState<{
     start: string;
     end: string;
     period: string;
-  }>(AVAILABLE_SLOTS[2]);
+  }>({ start: "", end: "", period: "Morning" });
   const [reason, setReason] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -109,6 +108,15 @@ export default function BookingPage() {
 
   const selectedDoctor =
     doctors.find((d) => d.id === selectedDoctorId) || doctors[0];
+  const dateDay = new Date(`${selectedDate}T12:00:00`).toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
+  const dailySchedule = schedule.find(day => day.dayOfWeek.toUpperCase() === dateDay);
+  const availableSlots = useMemo(() => {
+    if (!selectedDoctor || !selectedDoctor.available || !(selectedDoctor.workingDays ?? []).map(d => d.toUpperCase()).includes(dateDay)) return [];
+    let breaks: { startTime: string; endTime: string }[] = [];
+    try { breaks = dailySchedule?.breaksJson ? JSON.parse(dailySchedule.breaksJson) : []; } catch { /* malformed schedule has no usable break data */ }
+    return slotsBetween(dailySchedule?.startTime ?? selectedDoctor.workingHours.start, dailySchedule?.endTime ?? selectedDoctor.workingHours.end, selectedDoctor.slotDurationMinutes || 30, breaks);
+  }, [selectedDoctor, dateDay, dailySchedule]);
+  const selectedSlot = availableSlots.find(slot => slot.start === selectedSlotState.start) ?? availableSlots[0] ?? { start: "", end: "", period: "" };
 
   // Specialty options for filtering doctors
   const specialties = useMemo(() => {
@@ -135,9 +143,9 @@ export default function BookingPage() {
 
   // Filtered slots by period
   const displaySlots = useMemo(() => {
-    if (slotPeriodFilter === "ALL") return AVAILABLE_SLOTS;
-    return AVAILABLE_SLOTS.filter((s) => s.period === slotPeriodFilter);
-  }, [slotPeriodFilter]);
+    if (slotPeriodFilter === "ALL") return availableSlots;
+    return availableSlots.filter((s) => s.period === slotPeriodFilter);
+  }, [slotPeriodFilter, availableSlots]);
 
   const scrollDates = (direction: "left" | "right") => {
     if (dateScrollRef.current) {
@@ -146,14 +154,13 @@ export default function BookingPage() {
     }
   };
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDoctor || !selectedDate || !selectedSlot) return;
+    if (!selectedDoctor || !selectedDate || !selectedSlot.start) return;
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const newApt = bookAppointment({
+    const newApt = await bookAppointment({
         doctorId: selectedDoctor.id,
         appointmentDate: selectedDate,
         startTime: selectedSlot.start,
@@ -161,10 +168,8 @@ export default function BookingPage() {
         reason: reason.trim() || "General Consultation & Checkup",
         consultationType,
       });
-
-      setIsSubmitting(false);
-      setConfirmedAppointmentId(newApt.id);
-    }, 600);
+    setIsSubmitting(false);
+    if (newApt) setConfirmedAppointmentId(newApt.id);
   };
 
   return (

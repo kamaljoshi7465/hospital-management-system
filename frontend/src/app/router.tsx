@@ -8,6 +8,8 @@ import ProtectedRoute from "../components/auth/ProtectedRoute";
 
 import LoginPage from "../features/auth/pages/LoginPage";
 import DoctorLoginPage from "../features/auth/pages/DoctorLoginPage";
+import SignupPage from "../features/auth/pages/SignupPage";
+import StaffDashboardPage from "../features/dashboard/pages/StaffDashboardPage";
 import HomePage from "../features/dashboard/pages/HomePage";
 import DoctorProfilePage from "../features/doctors/pages/DoctorProfilePage";
 import PatientDashboardPage from "../features/dashboard/pages/PatientDashboardPage";
@@ -37,6 +39,8 @@ export const router = createBrowserRouter([
       /* ── Auth routes ── */
       { path: "/login", element: <LoginPage /> },
       { path: "/doctor-login", element: <DoctorLoginPage /> },
+      { path: "/signup", element: <SignupPage /> },
+      { path: "/staff", element: <ProtectedRoute allowedRole={["admin", "receptionist"]}><StaffDashboardPage /></ProtectedRoute> },
 
       /* ── Protected patient routes ── */
       {
