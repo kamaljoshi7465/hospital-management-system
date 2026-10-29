@@ -13,6 +13,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -57,6 +60,8 @@ public class PatientController {
 
     /* ── GET /api/patients ── */
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST','DOCTOR')")
+    @Transactional(readOnly = true)
     public List<PatientResponse> getAllPatients(@RequestParam(required = false) String q) {
         List<Patient> patients = (q != null && !q.isBlank())
                 ? patientRepository.search(q.trim())
@@ -67,6 +72,8 @@ public class PatientController {
 
     /* ── GET /api/patients/{id} ── */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST','DOCTOR') or @authz.patientOwner(#id, authentication)")
+    @Transactional(readOnly = true)
     public ResponseEntity<PatientResponse> getPatientById(@PathVariable Long id) {
         return patientRepository.findById(id)
                 .map(p -> ResponseEntity.ok(Mappers.toResponse(p)))
@@ -75,6 +82,8 @@ public class PatientController {
 
     /* ── GET /api/patients/user/{userId} ── */
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST') or @authz.patientUserOwner(#userId, authentication)")
+    @Transactional(readOnly = true)
     public ResponseEntity<PatientResponse> getPatientByUserId(@PathVariable Long userId) {
         return patientRepository.findByUserId(userId)
                 .map(p -> ResponseEntity.ok(Mappers.toResponse(p)))
@@ -83,6 +92,7 @@ public class PatientController {
 
     /* ── POST /api/patients ── */
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST')")
     public ResponseEntity<?> createPatient(@Valid @RequestBody PatientRequest request) {
         if (patientRepository.existsByEmailIgnoreCase(request.email())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -97,6 +107,9 @@ public class PatientController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("message", "User with ID " + request.userId() + " not found"));
             }
+            if (!"PATIENT".equalsIgnoreCase(userOpt.get().getRole())) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Linked user must have the PATIENT role"));
+            }
             if (patientRepository.existsByUserId(request.userId())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body(Map.of("message", "A patient profile is already linked to user ID " + request.userId()));
@@ -104,7 +117,7 @@ public class PatientController {
             patient.setUser(userOpt.get());
         } else {
             userRepository.findByEmailIgnoreCase(patient.getEmail()).ifPresent(u -> {
-                if (!patientRepository.existsByUserId(u.getId())) {
+                if ("PATIENT".equalsIgnoreCase(u.getRole()) && !patientRepository.existsByUserId(u.getId())) {
                     patient.setUser(u);
                 }
             });
@@ -115,9 +128,12 @@ public class PatientController {
 
     /* ── PUT /api/patients/{id} ── */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST') or @authz.patientOwner(#id, authentication)")
+    @Transactional
     public ResponseEntity<?> updatePatient(
             @PathVariable Long id,
-            @Valid @RequestBody PatientRequest request) {
+            @Valid @RequestBody PatientRequest request,
+            Authentication authentication) {
         return patientRepository.findById(id).<ResponseEntity<?>>map(patient -> {
             if (!patient.getEmail().equalsIgnoreCase(request.email())
                     && patientRepository.existsByEmailIgnoreCase(request.email())) {
@@ -125,11 +141,15 @@ public class PatientController {
                         .body(Map.of("message", "Email already in use by another patient"));
             }
             Mappers.applyRequest(request, patient);
-            if (request.userId() != null) {
+            boolean staffMayLink = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_RECEPTIONIST"));
+            if (request.userId() != null && staffMayLink) {
                 var userOpt = userRepository.findById(request.userId());
                 if (userOpt.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(Map.of("message", "User with ID " + request.userId() + " not found"));
+                }
+                if (!"PATIENT".equalsIgnoreCase(userOpt.get().getRole())) {
+                    return ResponseEntity.badRequest().body(Map.of("message", "Linked user must have the PATIENT role"));
                 }
                 var existing = patientRepository.findByUserId(request.userId());
                 if (existing.isPresent() && !existing.get().getId().equals(id)) {
@@ -138,12 +158,22 @@ public class PatientController {
                 }
                 patient.setUser(userOpt.get());
             }
+            if (patient.getUser() != null) {
+                var account = patient.getUser();
+                var duplicate = userRepository.findByEmailIgnoreCase(request.email());
+                if (duplicate.isPresent() && !duplicate.get().getId().equals(account.getId())) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Email already belongs to another account"));
+                }
+                account.setName(request.fullName().trim()); account.setEmail(request.email().trim().toLowerCase());
+                userRepository.save(account);
+            }
             return ResponseEntity.ok(Mappers.toResponse(patientRepository.save(patient)));
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /* ── DELETE /api/patients/{id} ── */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         if (!patientRepository.existsById(id))
             return ResponseEntity.notFound().build();
@@ -154,6 +184,7 @@ public class PatientController {
     /* ────────── Vitals sub-resource ────────── */
 
     @PutMapping("/{id}/vitals")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR','RECEPTIONIST') or @authz.patientOwner(#id, authentication)")
     public ResponseEntity<?> updateVitals(
             @PathVariable Long id,
             @RequestBody PatientRequest.VitalsRequest vitals) {
@@ -172,6 +203,7 @@ public class PatientController {
     /* ────────── Medications sub-resource ────────── */
 
     @GetMapping("/{id}/medications")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') or @authz.patientOwner(#id, authentication)")
     public ResponseEntity<?> getMedications(@PathVariable Long id) {
         if (!patientRepository.existsById(id))
             return ResponseEntity.notFound().build();
@@ -186,6 +218,7 @@ public class PatientController {
     }
 
     @PostMapping("/{id}/medications")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
     public ResponseEntity<?> addMedication(
             @PathVariable Long id,
             @Valid @RequestBody MedicationRequest request) {
@@ -207,6 +240,7 @@ public class PatientController {
     }
 
     @PutMapping("/{patientId}/medications/{medId}")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
     public ResponseEntity<?> updateMedication(
             @PathVariable Long patientId,
             @PathVariable Long medId,
@@ -233,6 +267,7 @@ public class PatientController {
     }
 
     @DeleteMapping("/{patientId}/medications/{medId}")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
     public ResponseEntity<Void> deleteMedication(
             @PathVariable Long patientId,
             @PathVariable Long medId) {

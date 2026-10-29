@@ -27,4 +27,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Optional<Doctor> findByUserId(Long userId);
 
     boolean existsByUserId(Long userId);
+    boolean existsByIdAndUser_Id(Long id, Long userId);
 }

@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,7 @@ public class DoctorAvailabilityController {
 
     /* ── PUT /api/doctors/{doctorId}/availability ── (bulk replace) ── */
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN') or @authz.doctorOwner(#doctorId, authentication)")
     @Transactional
     public ResponseEntity<?> replaceSchedule(
             @PathVariable Long doctorId,
@@ -114,6 +116,7 @@ public class DoctorAvailabilityController {
 
     /* ── PUT /api/doctors/{doctorId}/availability/{day} ── */
     @PutMapping("/{day}")
+    @PreAuthorize("hasRole('ADMIN') or @authz.doctorOwner(#doctorId, authentication)")
     public ResponseEntity<?> setDaySchedule(
             @PathVariable Long doctorId,
             @PathVariable String day,
@@ -139,6 +142,7 @@ public class DoctorAvailabilityController {
 
     /* ── DELETE /api/doctors/{doctorId}/availability/{day} ── */
     @DeleteMapping("/{day}")
+    @PreAuthorize("hasRole('ADMIN') or @authz.doctorOwner(#doctorId, authentication)")
     public ResponseEntity<?> removeDaySchedule(
             @PathVariable Long doctorId,
             @PathVariable String day) {
@@ -154,6 +158,7 @@ public class DoctorAvailabilityController {
 
     /* ── DELETE /api/doctors/{doctorId}/availability ── */
     @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN') or @authz.doctorOwner(#doctorId, authentication)")
     @Transactional
     public ResponseEntity<Void> clearSchedule(@PathVariable Long doctorId) {
         if (!doctorRepository.existsById(doctorId))

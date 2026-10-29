@@ -47,16 +47,18 @@ export default function DoctorSchedulePage() {
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateDoctor(currentDoctor.id, {
+    const ok = await updateDoctor(currentDoctor.id, {
       available,
       workingDays,
       workingHours,
       slotDurationMinutes: Number(slotDurationMinutes),
     });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    if (ok) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    }
   };
 
   return (

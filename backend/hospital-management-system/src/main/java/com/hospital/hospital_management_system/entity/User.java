@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(
@@ -33,6 +34,10 @@ public class User {
     @NotBlank(message = "Role is required")
     @Column(nullable = false, length = 30)
     private String role;
+
+    @JsonIgnore
+    @Column(name = "password_hash", length = 100)
+    private String passwordHash;
 
     public User() {
     }
@@ -64,4 +69,7 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 }

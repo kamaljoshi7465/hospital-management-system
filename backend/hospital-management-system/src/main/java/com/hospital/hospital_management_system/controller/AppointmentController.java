@@ -12,6 +12,11 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import com.hospital.hospital_management_system.auth.AuthorizationService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,26 +44,40 @@ public class AppointmentController {
     private final AppointmentRepository appointmentRepository;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
+    private final AuthorizationService authorization;
 
     public AppointmentController(
             AppointmentRepository appointmentRepository,
             PatientRepository patientRepository,
-            DoctorRepository doctorRepository) {
+            DoctorRepository doctorRepository,
+            AuthorizationService authorization) {
         this.appointmentRepository = appointmentRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
+        this.authorization = authorization;
     }
 
     private static final List<String> VALID_STATUSES = List.of("BOOKED", "CONFIRMED", "COMPLETED", "CANCELLED", "NO_SHOW");
 
     /* ── GET /api/appointments ── */
     @GetMapping
+    @Transactional(readOnly = true)
     public List<AppointmentResponse> getAllAppointments(
             @RequestParam(required = false) Long patientId,
             @RequestParam(required = false) Long doctorId,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String date
+            @RequestParam(required = false) String date,
+            Authentication authentication
     ) {
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_PATIENT"))) {
+            Long ownId = authorization.patientIdFor(authentication);
+            if (ownId == null || (patientId != null && !patientId.equals(ownId))) throw new AccessDeniedException("Cannot view another patient's appointments");
+            patientId = ownId; doctorId = null;
+        } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"))) {
+            Long ownId = authorization.doctorIdFor(authentication);
+            if (ownId == null || (doctorId != null && !doctorId.equals(ownId))) throw new AccessDeniedException("Cannot view another doctor's appointments");
+            doctorId = ownId; patientId = null;
+        }
         List<Appointment> results;
 
         if (patientId != null && status != null) {
@@ -80,6 +99,8 @@ public class AppointmentController {
 
     /* ── GET /api/appointments/{id} ── */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST') or @authz.appointmentPatientOwner(#id, authentication) or @authz.appointmentDoctorOwner(#id, authentication)")
+    @Transactional(readOnly = true)
     public ResponseEntity<AppointmentResponse> getById(@PathVariable Long id) {
         return appointmentRepository.findById(id)
                 .map(a -> ResponseEntity.ok(Mappers.toResponse(a)))
@@ -88,6 +109,8 @@ public class AppointmentController {
 
     /* ── GET /api/appointments/patient/{patientId} ── */
     @GetMapping("/patient/{patientId}")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST','DOCTOR') or @authz.patientOwner(#patientId, authentication)")
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getByPatient(@PathVariable Long patientId) {
         if (!patientRepository.existsById(patientId))
             return ResponseEntity.notFound().build();
@@ -98,6 +121,8 @@ public class AppointmentController {
 
     /* ── GET /api/appointments/doctor/{doctorId} ── */
     @GetMapping("/doctor/{doctorId}")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST') or @authz.doctorOwner(#doctorId, authentication)")
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getByDoctor(@PathVariable Long doctorId) {
         if (!doctorRepository.existsById(doctorId))
             return ResponseEntity.notFound().build();
@@ -108,6 +133,8 @@ public class AppointmentController {
 
     /* ── GET /api/appointments/doctor/{doctorId}/today ── */
     @GetMapping("/doctor/{doctorId}/today")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST') or @authz.doctorOwner(#doctorId, authentication)")
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getDoctorTodayAppointments(@PathVariable Long doctorId) {
         if (!doctorRepository.existsById(doctorId))
             return ResponseEntity.notFound().build();
@@ -120,7 +147,10 @@ public class AppointmentController {
 
     /* ── POST /api/appointments ── */
     @PostMapping
-    public ResponseEntity<?> bookAppointment(@Valid @RequestBody AppointmentRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST','PATIENT')")
+    public ResponseEntity<?> bookAppointment(@Valid @RequestBody AppointmentRequest request, Authentication authentication) {
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_PATIENT"))
+                && !request.patientId().equals(authorization.patientIdFor(authentication))) throw new AccessDeniedException("Cannot book for another patient");
         // Validate patient and doctor exist
         var patient = patientRepository.findById(request.patientId()).orElse(null);
         var doctor  = doctorRepository.findById(request.doctorId()).orElse(null);
@@ -157,14 +187,16 @@ public class AppointmentController {
 
     /* ── PATCH /api/appointments/{id}/status ── */
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST') or @authz.appointmentDoctorOwner(#id, authentication) or @authz.appointmentPatientOwner(#id, authentication)")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
-            @RequestBody Map<String, String> body) {
+            @RequestBody Map<String, String> body, Authentication authentication) {
         String status = body.get("status");
         if (status == null || !VALID_STATUSES.contains(status.toUpperCase())) {
             return ResponseEntity.badRequest().body(Map.of(
                     "message", "Invalid status. Must be one of: " + VALID_STATUSES));
         }
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_PATIENT")) && !"CANCELLED".equalsIgnoreCase(status)) throw new AccessDeniedException("Patients can only cancel their own appointments");
         return appointmentRepository.findById(id).<ResponseEntity<?>>map(appointment -> {
             appointment.setStatus(status.toUpperCase());
             return ResponseEntity.ok(Mappers.toResponse(appointmentRepository.save(appointment)));
@@ -173,6 +205,7 @@ public class AppointmentController {
 
     /* ── PATCH /api/appointments/{id}/reschedule ── */
     @PatchMapping("/{id}/reschedule")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST') or @authz.appointmentDoctorOwner(#id, authentication) or @authz.appointmentPatientOwner(#id, authentication)")
     public ResponseEntity<?> reschedule(
             @PathVariable Long id,
             @RequestBody Map<String, String> body) {
@@ -204,6 +237,7 @@ public class AppointmentController {
 
     /* ── DELETE /api/appointments/{id} ── */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','RECEPTIONIST') or @authz.appointmentPatientOwner(#id, authentication)")
     public ResponseEntity<?> cancelAppointment(@PathVariable Long id) {
         return appointmentRepository.findById(id).<ResponseEntity<?>>map(appointment -> {
             appointment.setStatus("CANCELLED");

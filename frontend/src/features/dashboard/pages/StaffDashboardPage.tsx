@@ -1,0 +1,15 @@
+import { useAuth } from "../../../context/AuthContext";
+import { useHospital } from "../../../context/HospitalContext";
+import { useUsersQuery } from "../../../hooks/useHospitalApi";
+
+export default function StaffDashboardPage() {
+  const { currentUser, logout } = useAuth();
+  const { doctors, patients, appointments } = useHospital();
+  const { data: users = [], isLoading, error } = useUsersQuery(undefined, currentUser?.role === "admin");
+  return <main className="mx-auto min-h-screen max-w-6xl space-y-7 px-5 py-8 sm:px-8">
+    <header className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-sm font-semibold uppercase tracking-wide text-teal-700">MediCare staff workspace</p><h1 className="mt-1 text-3xl font-bold text-slate-900">Welcome, {currentUser?.fullName}</h1><p className="mt-1 text-sm text-slate-500">Signed in as {currentUser?.role}.</p></div><button onClick={() => void logout()} className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">Sign out</button></header>
+    <section className="grid gap-4 sm:grid-cols-3">{[["Patients", patients.length], ["Doctors", doctors.length], ["Appointments", appointments.length]].map(([label, value]) => <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-5"><p className="text-sm text-slate-500">{label}</p><p className="mt-2 text-3xl font-bold text-slate-900">{value}</p></div>)}</section>
+    <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="text-lg font-bold text-slate-900">Appointments</h2><div className="mt-4 overflow-x-auto"><table className="w-full text-left text-sm"><thead className="text-xs uppercase text-slate-500"><tr><th className="pb-3">Date</th><th>Patient</th><th>Doctor</th><th>Status</th></tr></thead><tbody className="divide-y divide-slate-100">{appointments.slice(0, 12).map(appointment => <tr key={appointment.id}><td className="py-3">{appointment.appointmentDate} {appointment.startTime}</td><td>{patients.find(p=>p.id===appointment.patientId)?.fullName ?? `Patient #${appointment.patientId}`}</td><td>{doctors.find(d=>d.id===appointment.doctorId)?.name ?? `Doctor #${appointment.doctorId}`}</td><td>{appointment.status}</td></tr>)}</tbody></table>{appointments.length === 0 && <p className="py-5 text-sm text-slate-500">No appointments yet.</p>}</div></section>
+    {currentUser?.role === "admin" && <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="text-lg font-bold text-slate-900">Staff accounts</h2>{isLoading && <p className="mt-3 text-sm text-slate-500">Loading staff…</p>}{error && <p role="alert" className="mt-3 text-sm text-rose-700">{error.message}</p>}<ul className="mt-3 divide-y divide-slate-100">{users.map(user=><li key={user.id} className="flex justify-between py-3 text-sm"><span>{user.name} · {user.email}</span><span className="font-semibold text-slate-500">{user.role}</span></li>)}</ul><p className="mt-3 text-xs text-slate-500">Create staff accounts through the secured administrator API; role assignment is never available during public signup.</p></section>}
+  </main>;
+}

@@ -14,60 +14,35 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
-import patientsData from "../../../data/patients.json";
-
-interface DemoAccount {
-  id: number;
-  name: string;
-  email: string;
-  bloodGroup: string;
-}
-
-const DEMO_ACCOUNTS: DemoAccount[] = (
-  patientsData as {
-    id: number;
-    fullName: string;
-    email: string;
-    bloodGroup: string;
-  }[]
-).map((p) => ({
-  id: p.id,
-  name: p.fullName,
-  email: p.email,
-  bloodGroup: p.bloodGroup,
-}));
 
 export default function LoginPage() {
-  const { login, isLoggedIn } = useAuth();
+  const { login, isLoggedIn, isLoading: sessionLoading, currentUser } = useAuth();
   const navigate = useNavigate();
 
-  // Default pre-filled with the first demo patient for zero-friction demo experience
-  const [email, setEmail] = useState("rahul.verma@example.com");
-  const [password, setPassword] = useState("medicare123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Already logged in → redirect to dashboard
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/patient/dashboard", { replace: true });
+    if (sessionLoading) return;
+    if (isLoggedIn && currentUser) {
+      const path = currentUser.role === "doctor" ? "/doctor-portal/dashboard" : currentUser.role === "admin" || currentUser.role === "receptionist" ? "/staff" : "/patient/dashboard";
+      navigate(path, { replace: true });
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, currentUser, navigate, sessionLoading]);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    await new Promise((r) => setTimeout(r, 450));
-
-    const result = login(email, password);
+    const result = await login(email, password);
     setLoading(false);
 
-    if (result.success) {
-      navigate("/patient/dashboard", { replace: true });
-    } else {
+    if (!result.success) {
       setError(result.error ?? "Invalid email or password.");
     }
   };
@@ -219,52 +194,8 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* ── Demo Account Selector (Pills, Not Duplicate Buttons) ── */}
-            <div className="mt-5 rounded-2xl bg-slate-50 p-2.5 ring-1 ring-slate-200/80">
-              <p className="mb-2 px-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                Select Demo Patient
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {DEMO_ACCOUNTS.map((acc) => {
-                  const isSelected = email.toLowerCase() === acc.email.toLowerCase();
-                  const initials = acc.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase();
-
-                  return (
-                    <button
-                      key={acc.id}
-                      type="button"
-                      onClick={() => {
-                        setEmail(acc.email);
-                        setPassword("medicare123");
-                        setError(null);
-                      }}
-                      className={`flex items-center gap-2.5 rounded-xl p-2 text-left transition ${
-                        isSelected
-                          ? "bg-white text-slate-900 font-semibold shadow-xs ring-2 ring-[#1265b5]"
-                          : "text-slate-600 hover:bg-white/60 hover:text-slate-900"
-                      }`}
-                    >
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#10243e] text-[10px] font-bold text-white">
-                        {initials}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs leading-tight">{acc.name}</p>
-                        <p className="text-[10px] text-slate-400 font-normal">
-                          Blood: {acc.bloodGroup}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Form */}
-            <form onSubmit={handleLoginSubmit} className="mt-5 space-y-4" noValidate>
+            <form onSubmit={handleLoginSubmit} className="mt-5 space-y-4">
               {/* Email */}
               <div>
                 <label
@@ -283,7 +214,7 @@ export default function LoginPage() {
                     type="email"
                     autoComplete="email"
                     placeholder="you@example.com"
-                    value={email}
+                  value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
@@ -300,9 +231,7 @@ export default function LoginPage() {
                   >
                     Password
                   </label>
-                  <span className="text-[11px] text-slate-400">
-                    Demo: <code className="font-semibold text-teal-700">medicare123</code>
-                  </span>
+
                 </div>
                 <div className="relative">
                   <Lock
@@ -357,6 +286,7 @@ export default function LoginPage() {
                 )}
               </button>
             </form>
+            <p className="mt-4 text-center text-xs text-slate-500">New patient? <Link to="/signup" className="font-semibold text-[#1265b5] hover:underline">Create an account</Link></p>
           </div>
         </div>
 

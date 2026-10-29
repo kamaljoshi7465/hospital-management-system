@@ -25,8 +25,8 @@ function calculateAge(dobString: string): number {
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
-function calculateBMI(weightKg: number, heightCm: number): { value: number; label: string } {
-  if (!weightKg || !heightCm) return { value: 22.0, label: "Normal" };
+function calculateBMI(weightKg: number, heightCm: number): { value: number | null; label: string } {
+  if (!weightKg || !heightCm) return { value: null, label: "Not recorded" };
   const heightM = heightCm / 100;
   const bmi = Number((weightKg / (heightM * heightM)).toFixed(1));
   let label = "Normal";
@@ -37,7 +37,7 @@ function calculateBMI(weightKg: number, heightCm: number): { value: number; labe
 }
 
 export default function PatientProfilePage() {
-  const { currentPatient, updatePatient, updateVitals, resetDemoData } = useHospital();
+  const { currentPatient, updatePatient, updateVitals, resetDemoData, addToast } = useHospital();
 
   // Modals
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -54,13 +54,13 @@ export default function PatientProfilePage() {
 
   // Vitals Form State
   const vitals = currentPatient.vitals || {
-    bloodPressure: "118/78",
-    heartRate: 72,
-    bloodSugar: 94,
-    weightKg: 71.5,
-    heightCm: 178,
-    temperatureF: 98.4,
-    lastUpdated: "2026-10-14",
+    bloodPressure: "",
+    heartRate: 0,
+    bloodSugar: 0,
+    weightKg: 0,
+    heightCm: 0,
+    temperatureF: 0,
+    lastUpdated: "",
   };
 
   const [bp, setBp] = useState(vitals.bloodPressure);
@@ -91,12 +91,16 @@ export default function PatientProfilePage() {
 
   const handleVitalsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!bp.trim() || [hr, sugar, weight, height].some(value => !value || Number(value) <= 0)) {
+      addToast("Check vitals", "Enter a blood pressure and positive values for each measurement.", "error");
+      return;
+    }
     updateVitals({
       bloodPressure: bp,
-      heartRate: Number(hr) || 72,
-      bloodSugar: Number(sugar) || 95,
-      weightKg: Number(weight) || 70,
-      heightCm: Number(height) || 175,
+      heartRate: Number(hr),
+      bloodSugar: Number(sugar),
+      weightKg: Number(weight),
+      heightCm: Number(height),
     });
     setLogVitalsOpen(false);
   };
@@ -232,7 +236,7 @@ export default function PatientProfilePage() {
                   BMI & Weight
                 </span>
                 <p className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900">
-                  {bmi.value}{" "}
+                  {bmi.value ?? "—"}{" "}
                   <span className="text-xs font-normal text-slate-400">({bmi.label})</span>
                 </p>
                 <p className="mt-1 text-[11px] text-slate-500">
